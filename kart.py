@@ -5,7 +5,7 @@ import pygame
 class Kart(pygame.sprite.Sprite):
     "Classe représentant un kart en course."
 
-    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/kart1.png", x:int=0, y:int=0, vitesse_max=50, acceleration=0.5) -> None:
+    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/kart1.png", x:int=0, y:int=0, vitesse_max=50.0, acceleration=0.5) -> None:
         """Initialise le kart
         - fenetre : fenêtre de jeu dans laquelle le kart est affiché
         - image : chemin de l'image représentannt le kart
@@ -22,6 +22,16 @@ class Kart(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+        self.vitesse = 0.0
+        self.acceleration = acceleration
+        self.vitesse_max = vitesse_max
+
+
+    def accelerer(self) -> None:
+        """Accélère le kart si sa vitesse est inférieure à la vitesse maximale."""
+        if self.vitesse < self.vitesse_max:
+            self.vitesse += (self.acceleration * self.vitesse_max) 
 
 
     def afficher(self) -> None:
