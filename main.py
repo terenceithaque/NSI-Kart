@@ -2,7 +2,9 @@
 import pygame
 pygame.init()
 from kart import *
+from circuits import *
 
+print(trace_circuit(1))
 
 # Créer la fenêtre de jeu
 fenetre = pygame.display.set_mode((800, 600))
