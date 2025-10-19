@@ -7,7 +7,7 @@ from circuits import *
 print(trace_circuit(1))
 
 # Créer la fenêtre de jeu
-fenetre = pygame.display.set_mode((800, 600))
+fenetre = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("NSI-Kart")
 
 execution = True
@@ -31,18 +31,22 @@ while execution:
 
     if touches[pygame.K_RIGHT]:
         kart_joueur.changer_direction("droite")
+        kart_joueur.mettre_a_jour_rotation()
 
     if touches[pygame.K_LEFT]:
         kart_joueur.changer_direction("gauche")
+        kart_joueur.mettre_a_jour_rotation()
 
     if touches[pygame.K_UP]:
         kart_joueur.changer_direction("haut")
+        kart_joueur.mettre_a_jour_rotation()
 
     if touches[pygame.K_DOWN]:
         kart_joueur.changer_direction("bas")
+        kart_joueur.mettre_a_jour_rotation()
 
 
-    kart_joueur.mettre_a_jour_rotation()
+    kart_joueur.mettre_a_jour_direction()
     kart_joueur.deplacer()                
     
     

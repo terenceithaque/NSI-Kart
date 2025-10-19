@@ -35,30 +35,76 @@ class Kart(pygame.sprite.Sprite):
         self.acceleration = acceleration
         self.vitesse_max = vitesse_max
 
-        self.direction = direction
+        self.direction = direction # Direction actuelle du kart
+        self.direction_suivante = self.direction # Direction suivante
 
 
     def changer_direction(self, nouvelle_direction:str) -> None:
         "Modifie la direction du kart"
-        self.direction = nouvelle_direction
+        self.direction_suivante = nouvelle_direction
 
 
     def mettre_a_jour_rotation(self):
         """Met à jour l'angle de rotation du kart."""
-        angles = {
+
+        # Il faudra gérer les différences d'angles selon la direction actuelle
+        
+        angles_haut = {
             "haut":0,
-            "droite":-90,
             "bas":180,
+            "droite":-90,
             "gauche":90
         }
 
-        angle = angles.get(self.direction, 0)
-        self.image = pygame.transform.rotate(self.image, angle)
+        angles_bas = {
+            "haut":180,
+            "bas":0,
+            "droite":90,
+            "gauche":-90
+        }
+
+        angles_gauche = {
+            "haut":-90,
+            "bas":90,
+            "droite":180,
+            "gauche":0,
+            
+        }
+
+        angles_droite = {
+            "haut":90,
+            "bas":-90,
+            "droite":0,
+            "gauche":180
+        }
+
+        if self.direction == "haut": # Si le kart se déplace actuellement vers le haut
+            # Appliquer la rotation de l'image du kart selon l'angle nécessaire pour la direction suivante
+            angle = angles_haut.get(self.direction_suivante, 0)
+            self.image = pygame.transform.rotate(self.image, angle)
+
+        # Idem pour les autres directions
+        elif self.direction == "bas":
+            angle = angles_bas.get(self.direction_suivante, 0)
+            self.image = pygame.transform.rotate(self.image, angle)
+
+        elif self.direction == "gauche":
+            angle = angles_gauche.get(self.direction_suivante, 0)
+            self.image = pygame.transform.rotate(self.image, angle)
+
+        elif self.direction == "droite":
+            angle = angles_droite.get(self.direction_suivante, 0)
+            self.image = pygame.transform.rotate(self.image, angle)            
 
         # Conserver le centre après rotation
         centre = self.rect.center
         self.rect = self.image.get_rect()
-        self.rect.center = centre        
+        self.rect.center = centre
+
+
+    def mettre_a_jour_direction(self) -> None:
+        """Met à jour la direction actuelle du kart par rapport à la suivante."""
+        self.direction = self.direction_suivante            
 
     def accelerer(self) -> None:
         """Accélère le kart si sa vitesse est inférieure à la vitesse maximale."""
