@@ -11,7 +11,7 @@ fenetre = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("NSI-Kart")
 
 execution = True
-kart_joueur = Kart(fenetre, "assets/images/kart1.png", 120, 600, 10.0, 0.05, "haut")
+kart_joueur = Kart(fenetre, "assets/images/kart1.png", 120, 600, 2.0, 0.05, "haut")
 acceleration = pygame.USEREVENT + 1
 pygame.time.set_timer(acceleration, 500)
 
