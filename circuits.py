@@ -23,6 +23,30 @@ def trace_circuit(numero_circuit:int=1) -> list:
     return dict_circuits[str(numero_circuit)] # Renvoyer le tableau de données correspondant au circuit désigné par le numéro
 
 
+
+
+class PortionCircuit:
+    """Une portion de route sur un circuit."""
+    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720):
+        """Initialise la portion de route.
+        - fenetre : fenêtre de jeu dans laquelle la portion de route est affichée
+        - image : image représentant la portion de route
+        - orient_image : degré de rotation de l'image représentant la portion de route"""
+
+
+        # Initialisation des attributs
+        self.fenetre = fenetre
+        self.image = pygame.image.load(image)
+        self.image = pygame.transform.rotate(self.image, orient_image)
+        self.image = pygame.transform.scale(self.image, (longueur, largeur))
+        self.rect_image = self.image.get_rect()
+
+    def afficher(self) -> None:
+        """Affiche la portion de route à l'écran"""
+        self.fenetre.blit(self.image, self.rect_image)    
+
+
+
 class Circuit:
     "Un circuit de course."
     def __init__(self, fenetre:pygame.Surface, numero:int=1) -> None:
@@ -45,3 +69,12 @@ class Circuit:
             1:"route",
             2:"ligne_arrivee"
         }
+
+
+    def est_sur_la_route(self, coordonnes:tuple=(0,0)) -> bool:
+        """Renvoie True si le point de coordonnées donné correspond à une partie de la route du circuit (valeur égale à 1 ou 2). Sinon, renvoie False."""
+        return self.donnees[coordonnes[0]][coordonnes[1]] > 0    
+
+    def tourne_a_droite(self, coordonnees:tuple=(0, 0), rapport_direction="haut") -> bool:
+        """Renvoie True si le circuit tourne à droite en une coordonnée précise par rapport à une direction donnée.
+        Par exemple, pour si un véhicule se déplace initialement dans la direction haut, cela rveient à vérifier si la case à droite est libre."""    

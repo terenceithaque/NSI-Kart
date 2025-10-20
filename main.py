@@ -4,16 +4,23 @@ pygame.init()
 from kart import *
 from circuits import *
 
-print(trace_circuit(1))
+
 
 # Créer la fenêtre de jeu
 fenetre = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("NSI-Kart")
 
 execution = True
-kart_joueur = Kart(fenetre, "assets/images/kart1.png", 120, 600, 2.0, 0.05, "haut")
+kart_joueur = Kart(fenetre, "assets/images/kart1.png", 120, 600, 2.0, 0.25, "haut")
 acceleration = pygame.USEREVENT + 1
 pygame.time.set_timer(acceleration, 500)
+
+
+circuit = Circuit(fenetre, 1)
+print(circuit.donnees)
+
+
+portion_depart = PortionCircuit(fenetre, "assets/images/route.png")
 
 # Boucle principale
 while execution:
@@ -49,8 +56,12 @@ while execution:
     kart_joueur.mettre_a_jour_direction()
     kart_joueur.deplacer()                
     
+
+    portion_depart.afficher()
     
-    kart_joueur.afficher()        
+    kart_joueur.afficher() 
+
+           
 
     # Mettre à jour l'affichage
     pygame.display.flip()        
