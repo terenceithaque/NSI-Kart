@@ -24,6 +24,24 @@ def trace_circuit(numero_circuit:int=1) -> list:
 
 
 
+def indice_plus_grande_liste(donnees:list) -> list:
+    """Renvoie l'indice de la plus grande liste dans une liste de listes.
+    Si toutes les listes sont de longueur égale, renvoie 0."""
+
+    indice_grande = 0 # Indice de la plus grande liste
+    max_tempo = len(donnees[0]) # Longueur maximale temporaire (au départ celle de la première liste)
+
+    # Pour chaque liste contenue dans la liste de listes
+    for i, liste in enumerate(donnees):
+        # Si la liste a une longueur plus grande que la longueur maximale enregistrée
+        if len(liste) > max_tempo:
+            max_tempo = len(liste) # Mettre à jour la longueur maximale temporaire
+            indice_grande = i # Mettre à jour l'indice de la plus grande liste
+
+    return indice_grande # Renvoyer l'indice de la plus grande liste
+
+
+
 
 class PortionCircuit:
     """Une portion de route sur un circuit."""
@@ -71,10 +89,67 @@ class Circuit:
         }
 
 
+        self.portions = [] # Liste des différentes portions de circuit
+
+
     def est_sur_la_route(self, coordonnes:tuple=(0,0)) -> bool:
         """Renvoie True si le point de coordonnées donné correspond à une partie de la route du circuit (valeur égale à 1 ou 2). Sinon, renvoie False."""
         return self.donnees[coordonnes[0]][coordonnes[1]] > 0    
 
-    def tourne_a_droite(self, coordonnees:tuple=(0, 0), rapport_direction="haut") -> bool:
-        """Renvoie True si le circuit tourne à droite en une coordonnée précise par rapport à une direction donnée.
-        Par exemple, pour si un véhicule se déplace initialement dans la direction haut, cela rveient à vérifier si la case à droite est libre."""    
+    def tourne_a_droite(self, coordonnees:tuple=(0, 0)) -> bool:
+        """Renvoie True si la prochaine case représentant une portion de route est située à droite de celle désignée par les coordonnées indiquées."""
+
+        x = coordonnees[0]
+        y = coordonnees[1]
+
+        assert self.est_sur_la_route(coordonnees), f"Impossible de vérifier si la route tourne à droite par rapport à un point qui n'est pas sur la route ({coordonnees[0]}, {coordonnees[1]})."
+
+        for ligne in range(x, len(self.donnees)):
+            print(ligne)
+            for colonne in range(y -1):
+                print(colonne)
+                if self.donnees[ligne][colonne + 1] == 1 or self.donnees[ligne][colonne+1] == 2:
+                    return True
+
+        return False
+
+    def est_tout_droit(self, coordonnees:tuple=(0, 0), direction:str="haut") -> bool:
+        """Vérifie si la route du circuit continue tout droit dans la direction donnée."""
+
+        # Assertions
+        assert self.est_sur_la_route(coordonnees), f"Impossible de vérifier si la route tourne à droite par rapport à un point qui n'est pas sur la route ({coordonnees[0]}, {coordonnees[1]})."
+
+        x = coordonnees[0] # Ligne actuelle
+        y = coordonnees[1] # Colonne actuelle
+
+
+        # Direction "haut"
+        if direction == "haut":
+            for ligne in range(x, len(self.donnees) -1):
+                if self.donnees[ligne+1][y] in [1, 2]:
+                    return True
+                
+                return False
+
+        # Direction "bas"
+        elif direction == "bas":
+            for ligne in range(x, 0, -1):
+                if self.donnees[ligne][y] in [1, 2]:
+                    return True
+                
+                return False
+                
+        # Direction "gauche"
+        elif direction == "gauche":
+            for colonne in range(y, 0, -1):
+                if self.donnees[x][colonne] in [1, 2]:
+                    return True
+                
+                return False
+
+        # Direction "droite"
+        elif direction == "droite":
+            for colonne in range(y, len())    
+
+
+                   
