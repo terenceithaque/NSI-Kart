@@ -17,3 +17,5 @@ class Joueur:
         self.position_depart = position_depart # Position de départ du joueur
 
         self.position = self.position_depart # Position actuelle du joueur dans le classement
+
+        self.tours = 1 # Numéro du tour actuel du joueur, au départ 1

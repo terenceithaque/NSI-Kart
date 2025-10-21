@@ -1,5 +1,14 @@
 # Script des karts
 import pygame
+import random
+
+
+def choisir_image_kart(n_min:int=1, n_max:int=6) -> str:
+    """Choisit une image de kart au hasard parmi les numéros de karts allant de n_min à n_max."""
+
+    n = random.randint(n_min, n_max)
+
+    return f"assets/images/kart{n}.png"
 
 
 class Kart(pygame.sprite.Sprite):
