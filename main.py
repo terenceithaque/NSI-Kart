@@ -19,6 +19,7 @@ pygame.time.set_timer(acceleration, 500)
 circuit = Circuit(fenetre, 1)
 print(circuit.donnees)
 print(circuit.tourne_a_droite((0, 3)))
+print(circuit.est_tout_droit((0, 4), "bas"))
 
 
 portion_depart = PortionCircuit(fenetre, "assets/images/route.png")
