@@ -3,6 +3,7 @@ import pygame
 pygame.init()
 from kart import *
 from circuits import *
+from joueur import *
 
 
 
@@ -10,8 +11,14 @@ from circuits import *
 fenetre = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("NSI-Kart")
 
-execution = True
+
+
+# Joueur et kart du joueur
 kart_joueur = Kart(fenetre, choisir_image_kart(1, 6), 120, 600, 2.0, 0.25, "haut")
+joueur = Joueur(fenetre, kart_joueur, 12)
+
+
+
 acceleration = pygame.USEREVENT + 1
 pygame.time.set_timer(acceleration, 500)
 
@@ -23,6 +30,9 @@ print(circuit.est_tout_droit((0, 4), "bas"))
 
 
 portion_depart = PortionCircuit(fenetre, "assets/images/route.png")
+
+execution = True
+
 
 # Boucle principale
 while execution:
