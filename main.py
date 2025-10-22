@@ -81,9 +81,36 @@ while execution:
 
     if kart_joueur.est_hors_ecran():
         print("Le kart du joueur est hors de l'écran !")
-        circuit.mettre_a_jour_coords_portion_actuelle(kart_joueur.direction_suivante)
         print("Coordonnées de la portion de circuit :", circuit.coordonnees_portion_actuelle)
-        
+
+        # Charger la prochaine portion de circuit selon la direction du kart du joueur
+        if kart_joueur.direction_suivante == "haut":
+            if circuit.est_tout_droit(circuit.coordonnees_portion_actuelle, kart_joueur.direction_suivante):
+                circuit.mettre_a_jour_coords_portion_actuelle(kart_joueur.direction_suivante)
+                portion_suivante = PortionCircuit(fenetre, "assets/images/route.png", 0, 1280, 720, len(circuit.portions) + 1)
+                circuit.ajouter_portion(portion_suivante)
+                circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+
+        elif kart_joueur.direction_suivante == "bas":
+             if circuit.est_tout_droit(circuit.coordonnees_portion_actuelle, kart_joueur.direction_suivante):
+                circuit.mettre_a_jour_coords_portion_actuelle(kart_joueur.direction_suivante)
+                portion_suivante = PortionCircuit(fenetre, "assets/images/route.png", 0, 1280, 720, len(circuit.portions) + 1)
+                circuit.ajouter_portion(portion_suivante)
+                circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+
+        elif kart_joueur.direction_suivante == "gauche":
+            if circuit.est_tout_droit(circuit.coordonnees_portion_actuelle, kart_joueur.direction_suivante):
+                circuit.mettre_a_jour_coords_portion_actuelle(kart_joueur.direction_suivante)
+                portion_suivante = PortionCircuit(fenetre, "assets/images/route.png", 90, 1280, 720, len(circuit.portions) + 1)
+                circuit.ajouter_portion(portion_suivante)
+                circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+
+        elif kart_joueur.direction_suivante == "droite":
+            if circuit.est_tout_droit(circuit.coordonnees_portion_actuelle, kart_joueur.direction_suivante):
+                circuit.mettre_a_jour_coords_portion_actuelle(kart_joueur.direction_suivante)
+                portion_suivante = PortionCircuit(fenetre, "assets/images/route.png", 90, 1280, 720, len(circuit.portions) + 1)
+                circuit.ajouter_portion(portion_suivante)
+                circuit.mettre_a_jour_portion_actuelle(portion_suivante)                
 
     if kart_joueur.est_hors_circuit(1280, 720):
         print("Le kart du joueur est hors du circuit !")                
