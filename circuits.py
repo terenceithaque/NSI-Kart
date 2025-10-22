@@ -80,6 +80,9 @@ class Circuit:
 
         # Le circuit commence toujours par la ligne de départ / arrivée
         self.portion_depart = PortionCircuit(self.fenetre, "assets/images/ligne_arrivee.png",0, 1280, 720, numero=1)
+        self.coordonnees_depart = self.coordonnees_ligne_arrivee(1) # On récupère les coordonnées de la première ligne de départ / arrivée
+        self.coordonnees_portion_actuelle = self.coordonnees_depart # Coordonnées de la portion actuellement chargée
+
         self.portions.append(self.portion_depart)
         self.portions_numeros[self.portion_depart.numero] = self.portion_depart
 
@@ -98,7 +101,32 @@ class Circuit:
                 if self.donnees[ligne][col] == 1 or self.donnees[ligne][col] == 2:
                     n_portions += 1 # On incrémente le nombre total de portions
 
-        return n_portions            
+        return n_portions
+
+
+    def mettre_a_jour_coords_portion_actuelle(self, direction="haut") -> None:
+        """Met à jour les coordonnées de la portion de circuit actuelle en fonction de la direction."""
+
+        # Direction "haut"
+        if direction == "haut":
+            if self.coordonnees_portion_actuelle[0] > 0:
+                self.coordonnees_portion_actuelle[0] -= 1
+
+        # Direction "bas"
+        elif direction == "bas":
+            if self.coordonnees_portion_actuelle[0] < (len(self.donnees)-1):  
+                self.coordonnees_portion_actuelle[0] += 1
+
+        # Direction "gauche"
+        elif direction == "gauche":
+            if self.coordonnees_portion_actuelle[1] > 0:
+                self.coordonnees_portion_actuelle[1] -=1
+
+        # Direction "droite"
+        elif direction == "droite":
+            if self.coordonnees_portion_actuelle[1] < (len(self.donnees[0]) -1):
+                self.coordonnees_portion_actuelle[1] += 1
+
 
 
     def est_sur_la_route(self, coordonnees:tuple=(0,0)) -> bool:
@@ -108,7 +136,7 @@ class Circuit:
         return self.donnees[x][y] > 0
     
 
-    def coordonnees_ligne_arrivee(self, n=1) -> tuple[int, int]:
+    def coordonnees_ligne_arrivee(self, n=1) -> list[int, int]:
         """Renvoie les coordonnées de la n-ième ligne d'arrivée dans les données du circuit.
         -n : nombre entier, désigne le numéro de la ligne d'arrivée dont on cherche les coordonnées. Par exemple, pour n=1, cela renvoie les coordonnées de la première
         ligne d'arrivée trouvée."""
@@ -128,7 +156,7 @@ class Circuit:
                         l = ligne
                         col = colonne
 
-        return (l, col)            
+        return [l, col]           
 
 
     def ajouter_portion(self, portion:PortionCircuit) -> None:

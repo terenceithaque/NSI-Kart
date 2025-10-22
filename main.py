@@ -81,6 +81,9 @@ while execution:
 
     if kart_joueur.est_hors_ecran():
         print("Le kart du joueur est hors de l'écran !")
+        circuit.mettre_a_jour_coords_portion_actuelle(kart_joueur.direction_suivante)
+        print("Coordonnées de la portion de circuit :", circuit.coordonnees_portion_actuelle)
+        
 
     if kart_joueur.est_hors_circuit(1280, 720):
         print("Le kart du joueur est hors du circuit !")                
