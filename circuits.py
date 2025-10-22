@@ -26,11 +26,14 @@ def trace_circuit(numero_circuit:int=1) -> list:
 
 class PortionCircuit:
     """Une portion de route sur un circuit."""
-    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720):
+    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1):
         """Initialise la portion de route.
         - fenetre : fenêtre de jeu dans laquelle la portion de route est affichée
         - image : image représentant la portion de route
-        - orient_image : degré de rotation de l'image représentant la portion de route"""
+        - orient_image : degré de rotation de l'image représentant la portion de route
+        - longueur : longueur de la portion en pixels
+        - largeur : largeur de la portion en pixels
+        - numero : numéro identifiant de la portion"""
 
 
         # Initialisation des attributs
@@ -39,6 +42,8 @@ class PortionCircuit:
         self.image = pygame.transform.rotate(self.image, orient_image)
         self.image = pygame.transform.scale(self.image, (longueur, largeur))
         self.rect_image = self.image.get_rect()
+
+        self.numero = numero
 
     def afficher(self) -> None:
         """Affiche la portion de route à l'écran"""
@@ -71,13 +76,44 @@ class Circuit:
 
 
         self.portions = [] # Liste des différentes portions de circuit
+        self.portions_numeros = {} # Dictionnaire liant les numéros (identifiants) de portions avec les objets PortionCircuit correspondants
+
+        # Le circuit commence toujours par la ligne de départ / arrivée
+        self.portion_depart = PortionCircuit(self.fenetre, "assets.images/ligne_arrivee.png", 1280, 720, numero=1)
+        self.portions.append(self.portion_depart)
+        self.portions_numeros[self.portion_depart.numero] = self.portion_depart
+
+        self.portion_actuelle = self.portion_depart # Portion de circuit actuelle
+
+
+    def nombre_portions(self) -> int:
+        """Renvoie le nombre maximum de portions dont le circuit est composé."""
+
+
+        n_portions = 0
+        # On parcoure l'ensemble des données du circuit
+        for ligne in range(len(self.donnees)):
+            for col in range(len(self.donnees[ligne])):
+                # On considère que chaque nombre 1 ou 2 correspond à une portion de circuit indépendante
+                if self.donnees[ligne][col] == 1 or self.donnees[ligne][col] == 2:
+                    n_portions += 1 # On incrémente le nombre total de portions
+
+        return n_portions            
 
 
     def est_sur_la_route(self, coordonnees:tuple=(0,0)) -> bool:
         """Renvoie True si le point de coordonnées donné correspond à une partie de la route du circuit (valeur égale à 1 ou 2). Sinon, renvoie False."""
         x = coordonnees[0]
         y = coordonnees[1]        
-        return self.donnees[x][y] > 0    
+        return self.donnees[x][y] > 0
+
+
+    def ajouter_portion(self, portion:PortionCircuit) -> None:
+        """Intègre une portion de circuit (type PortionCircuit) au circuit de course."""
+        self.portions.append(portion) # On ajoute la portion à la liste des portions
+        if portion.numero < self.nombre_portions():
+            self.portions_numeros[portion.numero] = portion
+
 
     def tourne_a_droite(self, coordonnees:tuple=(0, 0)) -> bool:
         """Renvoie True si la prochaine case représentant une portion de route est située à droite de celle désignée par les coordonnées indiquées."""
@@ -136,6 +172,11 @@ class Circuit:
                 
 
         return False
+    
+
+    def afficher(self) -> None:
+        """Affiche la portion actuelle du circuit à l'écran."""
+        self.portion_actuelle.afficher()
                 
 
 

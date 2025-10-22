@@ -60,7 +60,12 @@ class Kart(pygame.sprite.Sprite):
         y = dimensions[1]
 
         return any([self.rect.x < 0, self.rect.x > x,
-                   self.rect.y < 0, self.rect.y > y])    
+                   self.rect.y < 0, self.rect.y > y])
+
+
+    def est_hors_circuit(self, longueur_portion:int, largeur_portion:int) -> bool:
+        "Renvoie True si le kart est en dehors de la portion du circuit actuelle, False sinon."
+        return any([self.rect.x > longueur_portion, self.rect.y > largeur_portion])    
 
 
     def mettre_a_jour_rotation(self):

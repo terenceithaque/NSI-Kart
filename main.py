@@ -43,6 +43,9 @@ while execution:
 
     touches = pygame.key.get_pressed()
 
+
+    print(kart_joueur.rect.x, kart_joueur.rect.y)
+
     for evenement in pygame.event.get():
         if evenement.type == pygame.QUIT:
             execution = False
@@ -75,7 +78,10 @@ while execution:
 
 
     if kart_joueur.est_hors_ecran():
-        print("Le kart du joueur est hors de l'écran !")                
+        print("Le kart du joueur est hors de l'écran !")
+
+    if kart_joueur.est_hors_circuit(1280, 720):
+        print("Le kart du joueur est hors du circuit !")                
     
 
     portion_depart.afficher()
