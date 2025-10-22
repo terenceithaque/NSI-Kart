@@ -79,7 +79,7 @@ class Circuit:
         self.portions_numeros = {} # Dictionnaire liant les numéros (identifiants) de portions avec les objets PortionCircuit correspondants
 
         # Le circuit commence toujours par la ligne de départ / arrivée
-        self.portion_depart = PortionCircuit(self.fenetre, "assets.images/ligne_arrivee.png", 1280, 720, numero=1)
+        self.portion_depart = PortionCircuit(self.fenetre, "assets/images/ligne_arrivee.png",0, 1280, 720, numero=1)
         self.portions.append(self.portion_depart)
         self.portions_numeros[self.portion_depart.numero] = self.portion_depart
 
@@ -113,6 +113,11 @@ class Circuit:
         self.portions.append(portion) # On ajoute la portion à la liste des portions
         if portion.numero < self.nombre_portions():
             self.portions_numeros[portion.numero] = portion
+
+
+    def mettre_a_jour_portion_actuelle(self, portion:PortionCircuit) -> None:
+        """Met à jour la portion de circuit actuelle en la remplaçant par la portion donnée en paramètre."""
+        self.portion_actuelle = portion        
 
 
     def tourne_a_droite(self, coordonnees:tuple=(0, 0)) -> bool:

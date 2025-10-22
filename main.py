@@ -29,7 +29,6 @@ print(circuit.tourne_a_droite((0, 3)))
 print(circuit.est_tout_droit((0, 4), "bas"))
 
 
-portion_depart = PortionCircuit(fenetre, "assets/images/route.png")
 
 execution = True
 
@@ -39,7 +38,7 @@ while execution:
 
     #pygame.time.wait(1000)
 
-    fenetre.fill((0, 0, 0))
+    fenetre.fill((255, 255, 255))
 
     touches = pygame.key.get_pressed()
 
@@ -82,11 +81,10 @@ while execution:
 
     if kart_joueur.est_hors_circuit(1280, 720):
         print("Le kart du joueur est hors du circuit !")                
-    
-
-    portion_depart.afficher()
-    
+        
     kart_joueur.afficher() 
+
+    circuit.afficher()
 
            
 
