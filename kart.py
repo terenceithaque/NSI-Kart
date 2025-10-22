@@ -30,7 +30,6 @@ class Kart(pygame.sprite.Sprite):
         # Image originale du kart
         self.image = pygame.image.load(self.chemin_image)
         self.image = pygame.transform.scale(self.image, (100, 100))
-
     
 
         self.rect = self.image.get_rect()
@@ -51,6 +50,17 @@ class Kart(pygame.sprite.Sprite):
     def changer_direction(self, nouvelle_direction:str) -> None:
         "Modifie la direction du kart"
         self.direction_suivante = nouvelle_direction
+
+
+    def est_hors_ecran(self) -> bool:
+        "Renvoie True si le kart est sorti de l'écran, False sinon."
+
+        dimensions = self.fenetre.get_size()
+        x = dimensions[0]
+        y = dimensions[1]
+
+        return any([self.rect.x < 0, self.rect.x > x,
+                   self.rect.y < 0, self.rect.y > y])    
 
 
     def mettre_a_jour_rotation(self):

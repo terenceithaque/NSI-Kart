@@ -18,7 +18,7 @@ class Joueur:
 
         self.position = self.position_depart # Position actuelle du joueur dans le classement
 
-        self.tours = 1 # Numéro du tour actuel du joueur, au départ 1
+        self.tour = 1 # Numéro du tour actuel du joueur, au départ 1
 
     def incrementer_position(self, addition:int=1):
         """Incrémente la position du joueur dans le classement."""

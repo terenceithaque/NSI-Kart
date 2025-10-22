@@ -37,6 +37,8 @@ execution = True
 # Boucle principale
 while execution:
 
+    #pygame.time.wait(1000)
+
     fenetre.fill((0, 0, 0))
 
     touches = pygame.key.get_pressed()
@@ -46,7 +48,10 @@ while execution:
             execution = False
 
         if evenement.type == acceleration: 
-            kart_joueur.accelerer()   
+            kart_joueur.accelerer()
+
+        if evenement.type == pygame.MOUSEMOTION:
+            print(pygame.mouse.get_pos())       
 
     if touches[pygame.K_RIGHT]:
         kart_joueur.changer_direction("droite")
@@ -66,7 +71,11 @@ while execution:
 
 
     kart_joueur.mettre_a_jour_direction()
-    kart_joueur.deplacer()                
+    kart_joueur.deplacer()
+
+
+    if kart_joueur.est_hors_ecran():
+        print("Le kart du joueur est hors de l'écran !")                
     
 
     portion_depart.afficher()

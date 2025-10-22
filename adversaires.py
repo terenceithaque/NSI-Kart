@@ -18,6 +18,7 @@ class Adversaire:
         self.kart = kart # Kart de l'adversaire
         self.position_depart = position_depart # Position de départ de l'adversaire
         self.position = self.position_depart # Position actuelle de l'adversaire dans le classement
+        self.tour = 1  # Numéro du tour actuel de l'adversaire, au départ 1
 
 
     def incrementer_position(self, addition:int=1):
