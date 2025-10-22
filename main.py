@@ -40,6 +40,9 @@ while execution:
 
     fenetre.fill((255, 255, 255))
 
+
+    circuit.afficher()
+
     touches = pygame.key.get_pressed()
 
 
@@ -84,7 +87,10 @@ while execution:
         
     kart_joueur.afficher() 
 
-    circuit.afficher()
+
+    print("Coordonnées de la ligne d'arrivée :", circuit.coordonnees_ligne_arrivee(1))
+
+    
 
            
 

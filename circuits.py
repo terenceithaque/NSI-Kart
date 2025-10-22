@@ -106,6 +106,29 @@ class Circuit:
         x = coordonnees[0]
         y = coordonnees[1]        
         return self.donnees[x][y] > 0
+    
+
+    def coordonnees_ligne_arrivee(self, n=1) -> tuple[int, int]:
+        """Renvoie les coordonnées de la n-ième ligne d'arrivée dans les données du circuit.
+        -n : nombre entier, désigne le numéro de la ligne d'arrivée dont on cherche les coordonnées. Par exemple, pour n=1, cela renvoie les coordonnées de la première
+        ligne d'arrivée trouvée."""
+
+        l = 0 # Ligne dans les données
+        col= 0 # Colonne dans les données
+        n_lignes_arrivee = 0 # Nombre de lignes d'arrivée trouvées
+
+        while n_lignes_arrivee < n:
+            # Parcourir chaque ligne et chaque colonne dans le tableau de données
+            for ligne in range(len(self.donnees)):
+                for colonne in range(len(self.donnees[col])):
+                    # Si la case actuelle représente une ligne d'arrivée
+                    if self.donnees[ligne][colonne] == 2:
+                        n_lignes_arrivee += 1 # Incrémenter le compteur de lignes d'arrivée trouvées
+                        # Mettre à jour les coordonnées dans le tableau
+                        l = ligne
+                        col = colonne
+
+        return (l, col)            
 
 
     def ajouter_portion(self, portion:PortionCircuit) -> None:
