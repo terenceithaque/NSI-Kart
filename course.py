@@ -19,7 +19,7 @@ class Course:
         self.fenetre = fenetre
         assert 0 < position_joueur <= n_participants, f"La position de départ du joueur doit être comprise entre 1 et {n_participants}."
 
-        self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), 120, 600, 2.0, 0.25, "haut") # Kart du joueur
+        self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), 120, 600, 6.0, 0.25, "haut") # Kart du joueur
         self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur) # Joueur
 
         self.circuit = Circuit(self.fenetre, numero_circuit)
@@ -33,7 +33,9 @@ class Course:
 
 
         acceleration = pygame.USEREVENT + 1
+        deceleration = pygame.USEREVENT + 2
         pygame.time.set_timer(acceleration, 500)
+
 
         execution = True
 
@@ -41,6 +43,10 @@ class Course:
         # Boucle principale
         while execution:
                 #pygame.time.wait(1000)
+
+
+                if not self.kart_joueur.moteur_allume:
+                    self.kart_joueur.decelerer()
 
                 self.fenetre.fill((255, 255, 255))
 
@@ -50,17 +56,38 @@ class Course:
                 touches = pygame.key.get_pressed()
 
 
-                print(self.kart_joueur.rect.x, self.kart_joueur.rect.y)
+                #print(self.kart_joueur.rect.x, self.kart_joueur.rect.y)
 
                 for evenement in pygame.event.get():
                     if evenement.type == pygame.QUIT:
                         pygame.quit()
 
-                    if evenement.type == acceleration: 
-                        self.kart_joueur.accelerer()
+                    if evenement.type == acceleration:
+                        if self.kart_joueur.moteur_allume: 
+                            self.kart_joueur.accelerer()
+
+                    if evenement.type == deceleration:
+                        if not self.kart_joueur.moteur_allume:
+                            self.kart_joueur.decelerer()        
+
+                    if evenement.type == pygame.KEYUP:
+                        if evenement.key == pygame.K_SPACE:
+                            self.kart_joueur.moteur_allume = not self.kart_joueur.moteur_allume
+                            if self.kart_joueur.moteur_allume == False:
+                                pygame.time.set_timer(acceleration, 0)
+                                pygame.time.set_timer(deceleration, 1000)
+
+                            else:
+                                pygame.time.set_timer(deceleration, 0)
+                                pygame.time.set_timer(acceleration, 500)    
+
 
                     if evenement.type == pygame.MOUSEMOTION:
-                        print(pygame.mouse.get_pos())       
+                        print(pygame.mouse.get_pos())
+
+
+                if not self.kart_joueur.moteur_allume:
+                    self.kart_joueur.decelerer()               
 
                 if touches[pygame.K_RIGHT]:
                     self.kart_joueur.changer_direction("droite")
@@ -124,7 +151,7 @@ class Course:
                 self.kart_joueur.afficher() 
 
 
-                print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))
+                #print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))
 
                 
 

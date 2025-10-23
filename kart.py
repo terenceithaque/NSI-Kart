@@ -42,6 +42,7 @@ class Kart(pygame.sprite.Sprite):
         self.vitesse_droite = 0.0
         self.acceleration = acceleration
         self.vitesse_max = vitesse_max
+        self.moteur_allume = False # Le moteur du kart est-il allumé ?
 
         self.direction = direction # Direction actuelle du kart
         self.direction_suivante = self.direction # Direction suivante
@@ -151,6 +152,25 @@ class Kart(pygame.sprite.Sprite):
             if self.vitesse_droite < self.vitesse_max:
                 self.vitesse_droite += (self.acceleration * self.vitesse_max)
                 print("Vitesse du kart (droite) :", self.vitesse_droite)
+
+
+    def decelerer(self) -> None:
+        """Le kart ralentit."""
+        if self.vitesse_haut > 0:
+            self.vitesse_haut *= 0.95
+            print("Vitesse du kart (haut) :", self.vitesse_haut) 
+
+        if self.vitesse_bas > 0:    
+            self.vitesse_bas *= 0.95
+            print("Vitesse du kart (bas) :", self.vitesse_bas)
+
+        if self.vitesse_gauche > 0:    
+            self.vitesse_gauche *= 0.95
+            print("Vitesse du kart (gauche) :", self.vitesse_gauche)
+
+        if self.vitesse_droite > 0:    
+            self.vitesse_droite *= 0.95
+            print("Vitesse du kart (droite) :", self.vitesse_droite)           
 
 
     def deplacer(self) -> None:
