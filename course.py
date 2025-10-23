@@ -116,6 +116,22 @@ class Course:
 
                     # Charger la prochaine portion de circuit selon la direction du kart du joueur
                     # A ajouter : gestion des transitions (virages vers la droite, la gauche, etc. selon la direction)
+
+
+                    # Replacer le kart du joueur
+                    if self.kart_joueur.direction == "haut":
+                        self.kart_joueur.changer_position((self.kart_joueur.rect.x, 716))
+
+                    if self.kart_joueur.direction == "bas":
+                        self.kart_joueur.changer_position((self.kart_joueur.rect.x, 0))
+
+                    if self.kart_joueur.direction == "gauche":
+                        self.kart_joueur.changer_position((1279, self.kart_joueur.rect.y))
+
+                    if self.kart_joueur.direction == "droite":
+                        self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
+
+                    #self.circuit.charger_prochaine_portion()
                     
                     if self.kart_joueur.direction_suivante == "haut":
                         if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):

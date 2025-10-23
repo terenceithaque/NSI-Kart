@@ -26,14 +26,15 @@ def trace_circuit(numero_circuit:int=1) -> list:
 
 class PortionCircuit:
     """Une portion de route sur un circuit."""
-    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1):
+    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1, direction:str="haut"):
         """Initialise la portion de route.
         - fenetre : fenêtre de jeu dans laquelle la portion de route est affichée
         - image : image représentant la portion de route
         - orient_image : degré de rotation de l'image représentant la portion de route
         - longueur : longueur de la portion en pixels
         - largeur : largeur de la portion en pixels
-        - numero : numéro identifiant de la portion"""
+        - numero : numéro identifiant de la portion
+        - direction : direction vers laquelle la portion de circuit est orientée."""
 
 
         # Initialisation des attributs
@@ -44,6 +45,7 @@ class PortionCircuit:
         self.rect_image = self.image.get_rect()
 
         self.numero = numero
+        self.direction = direction
 
     def afficher(self) -> None:
         """Affiche la portion de route à l'écran"""
@@ -168,7 +170,50 @@ class Circuit:
 
     def mettre_a_jour_portion_actuelle(self, portion:PortionCircuit) -> None:
         """Met à jour la portion de circuit actuelle en la remplaçant par la portion donnée en paramètre."""
-        self.portion_actuelle = portion        
+        self.portion_actuelle = portion
+
+
+    def charger_prochaine_portion(self) -> None:
+        """Charge la prochaine portion du circuit."""
+        if self.portion_actuelle.direction == "haut":
+            # Si le circuit tourne à gauche par rapport à la direction "haut"
+            if self.est_tout_droit(self.coordonnees_portion_actuelle, "gauche"):
+                portion_suivante = PortionCircuit(self.fenetre, "assets/images/virage_gauche.png", 0, 1280, 720, len(self.portions) + 1, "gauche")
+                self.ajouter_portion(portion_suivante)
+                self.mettre_a_jour_portion_actuelle(portion_suivante)
+
+            # Si le circuit tourne à droite par rapport la direction "haut"
+            elif self.est_tout_droit(self.coordonnees_portion_actuelle, "droite"):
+                portion_suivante = PortionCircuit(self.fenetre, "assets/images/virage_droite.png", 0, 1280, 720, len(self.portions) + 1, "droite")
+                self.ajouter_portion(portion_suivante)
+                self.mettre_a_jour_portion_actuelle(portion_suivante)
+
+            # Si le circuit continue vers le haut
+            elif self.est_tout_droit(self.coordonnees_portion_actuelle, "haut"):
+                portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.portions) + 1, "haut")
+                self.ajouter_portion(portion_suivante)
+                self.mettre_a_jour_portion_actuelle(portion_suivante)     
+
+        elif self.portion_actuelle.direction == "bas":
+            # Si le circuit tourne à gauche par rapport à la direction "bas"
+            if self.est_tout_droit(self.coordonnees_portion_actuelle, "gauche"):
+                portion_suivante = PortionCircuit(self.fenetre, "assets/images/virage_gauche.png", 0, 1280, 720, len(self.portions) + 1, "gauche")
+                portion_suivante.image = pygame.transform.flip(portion_suivante.image, False, True)
+                self.ajouter_portion(portion_suivante)
+                self.mettre_a_jour_portion_actuelle(portion_suivante)
+
+            # Si le circuit tourne à droite par rapport à la direction "bas"
+            elif self.est_tout_droit(self.coordonnees_portion_actuelle, "droite"):
+                portion_suivante = PortionCircuit(self.fenetre, "assets/images/virage_droite.png", 0, 1280, 720, len(self.portions) + 1, "droite")
+                portion_suivante.image = pygame.transform.flip(portion_suivante.image, False, True)
+                self.ajouter_portion(portion_suivante)
+                self.mettre_a_jour_portion_actuelle(portion_suivante)
+
+            # Si le circuit continue vers le bas
+            elif self.est_tout_droit(self.coordonnees_portion_actuelle, "bas"):
+                portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.portions) + 1, "bas")
+                self.ajouter_portion(portion_suivante)
+                self.mettre_a_jour_portion_actuelle(portion_suivante)                                  
 
 
     def tourne_a_droite(self, coordonnees:tuple=(0, 0)) -> bool:
