@@ -131,9 +131,9 @@ class Course:
                     if self.kart_joueur.direction == "droite":
                         self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
 
-                    #self.circuit.charger_prochaine_portion()
+                    self.circuit.charger_prochaine_portion()
                     
-                    if self.kart_joueur.direction_suivante == "haut":
+                    """"if self.kart_joueur.direction_suivante == "haut":
                         if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
                             self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
                             portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.circuit.portions) + 1)
@@ -159,7 +159,7 @@ class Course:
                             self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
                             portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 90, 1280, 720, len(self.circuit.portions) + 1)
                             self.circuit.ajouter_portion(portion_suivante)
-                            self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)                
+                            self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)"""                
 
                 if self.kart_joueur.est_hors_circuit(1280, 720):
                     print("Le kart du joueur est hors du circuit !")                
