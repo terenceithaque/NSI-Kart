@@ -28,6 +28,9 @@ class Joueur:
         """Incrémente la position du joueur dans le classement."""
 
         self.position += addition
+        # La position du joueur ne peut jamais être inférieure à 1
+        if self.position < 1:
+            self.position = 1
 
     def afficher_position(self) -> None:
         """Affiche la position du joueur à l'écran."""
@@ -36,7 +39,7 @@ class Joueur:
             1: (255, 255, 0),
             2: (128, 128, 128),
             3: (128, 0, 0),
-            4: (265, 165, 0),
+            4: (255, 165, 0),
             5: (237, 158, 11),
             6: (244, 164, 15),
             7: (213, 145, 19),

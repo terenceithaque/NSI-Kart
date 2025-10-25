@@ -142,22 +142,38 @@ class Kart(pygame.sprite.Sprite):
         if self.direction == "haut":
             if self.vitesse_haut < self.vitesse_max:
                 self.vitesse_haut += (self.acceleration * self.vitesse_max)
-                print("Vitesse du kart (haut) :", self.vitesse_haut)
+                # Corriger la vitesse si elle excède le maximum
+                if self.vitesse_haut > self.vitesse_max:
+                    self.vitesse_haut = self.vitesse_max
+
+                print("Vitesse du kart (haut) :", self.vitesse_haut)    
 
         elif self.direction == "bas":
             if self.vitesse_bas < self.vitesse_max:
                 self.vitesse_bas += (self.acceleration * self.vitesse_max)
-                print("Vitesse du kart (bas) :", self.vitesse_bas)
+                # Corriger la vitesse si elle excède le maximum
+                if self.vitesse_bas > self.vitesse_max:
+                    self.vitesse_bas = self.vitesse_max
+
+                print("Vitesse du kart (bas) :", self.vitesse_bas)    
 
         elif self.direction == "gauche":
             if self.vitesse_gauche < self.vitesse_max:
                 self.vitesse_gauche += (self.acceleration * self.vitesse_max)
-                print("Vitesse du kart (gauche) :", self.vitesse_gauche)
+                # Corriger la vitesse si elle excède le maximum
+                if self.vitesse_gauche > self.vitesse_max:
+                    self.vitesse_gauche = self.vitesse_max
+
+                print("Vitesse du kart (gauche) :", self.vitesse_gauche)    
 
         elif self.direction == "droite":
             if self.vitesse_droite < self.vitesse_max:
                 self.vitesse_droite += (self.acceleration * self.vitesse_max)
-                print("Vitesse du kart (droite) :", self.vitesse_droite)
+                # Corriger la vitesse si elle excède le maximum
+                if self.vitesse_droite > self.vitesse_max:
+                    self.vitesse_gauche = self.vitesse_max
+
+                print("Vitesse du kart (droite) :", self.vitesse_droite)    
 
 
     def decelerer(self) -> None:

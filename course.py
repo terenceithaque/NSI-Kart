@@ -34,7 +34,9 @@ class Course:
 
         acceleration = pygame.USEREVENT + 1
         deceleration = pygame.USEREVENT + 2
+        increment_position_joueur = pygame.USEREVENT + 3
         pygame.time.set_timer(acceleration, 500)
+        pygame.time.set_timer(increment_position_joueur, 1000)
 
 
         execution = True
@@ -72,7 +74,10 @@ class Course:
 
                     if evenement.type == deceleration:
                         if not self.kart_joueur.moteur_allume:
-                            self.kart_joueur.decelerer()        
+                            self.kart_joueur.decelerer()
+
+                    if evenement.type == increment_position_joueur:
+                        self.joueur.incrementer_position(-1)                
 
                     if evenement.type == pygame.KEYUP:
                         if evenement.key == pygame.K_SPACE:
