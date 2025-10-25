@@ -262,7 +262,7 @@ class Circuit:
             image = "assets/images/route.png"
             rotation = 90
 
-        # Gestion des virages$
+        # Gestion des virages
         if direction_suivante != self.portion_actuelle.direction:
             image = "assets/images/virage_gauche.png"
             rotation = self.rotation_virage(self.portion_actuelle.direction, direction_suivante)
