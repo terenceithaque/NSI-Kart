@@ -1,9 +1,6 @@
 # Programme principal du jeu
 import pygame
 pygame.init()
-from kart import *
-from circuits import *
-from joueur import *
 from course import *
 
 

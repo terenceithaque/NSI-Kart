@@ -31,7 +31,7 @@ class LigneArrivee(pygame.sprite.Sprite):
 
     def est_passee(self, objet) -> bool:
         """Renvoie True si la ligne est passée par un objet actuellement, False sinon."""
-        return pygame.Rect.colliderect(self, objet.rect)    
+        return pygame.Rect.colliderect(self.rect, objet.rect)    
 
 
     def afficher(self) -> None:

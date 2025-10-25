@@ -3,6 +3,7 @@ import pygame
 pygame.init()
 import json
 import os
+from ligne_arrivee import *
 
 
 def trace_circuit(numero_circuit:int=1) -> list:
@@ -46,10 +47,37 @@ class PortionCircuit:
 
         self.numero = numero
         self.direction = direction
+        self.ligne_arrivee_placee = False
+        self.ligne_arrivee = None
+        self.orient = orient_image
+        self.longueur = longueur
+        self.largeur = largeur
+    
+
+    def placer_ligne_arrivee(self) -> None:
+        """Place une ligne d'arrivée sur la portion de circuit."""
+        if not self.ligne_arrivee_placee:
+            epaisseur_ligne = 20
+            self.ligne_arrivee = LigneArrivee(self.fenetre, self.orient, self.longueur, epaisseur_ligne, 0, self.largeur // 2 - epaisseur_ligne // 2)
+            self.ligne_arrivee_placee = True
+
+
+    def est_ligne_arrivee_passee(self, objet) -> bool:
+        """Si la portion de circuit possède est une ligne d'arrivée et qu'elle est passée, renvoie True, et False sinon. Si la portion ne possède aucune ligne d'arrivée, renvoie False."""        
+        
+        if self.ligne_arrivee_placee:
+            if self.ligne_arrivee.est_passee(objet):
+                return True
+            
+            return False
+        
+        return False
 
     def afficher(self) -> None:
         """Affiche la portion de route à l'écran"""
-        self.fenetre.blit(self.image, self.rect_image)    
+        self.fenetre.blit(self.image, self.rect_image)
+        if self.ligne_arrivee_placee:
+            self.ligne_arrivee.afficher()    
 
 
 
@@ -81,7 +109,8 @@ class Circuit:
         self.portions_numeros = {} # Dictionnaire liant les numéros (identifiants) de portions avec les objets PortionCircuit correspondants
 
         # Le circuit commence toujours par la ligne de départ / arrivée
-        self.portion_depart = PortionCircuit(self.fenetre, "assets/images/ligne_arrivee.png",0, 1280, 720, numero=1)
+        self.portion_depart = PortionCircuit(self.fenetre, "assets/images/route.png",0, 1280, 720, numero=1)
+        self.portion_depart.placer_ligne_arrivee()
         self.coordonnees_depart = self.coordonnees_ligne_arrivee(1) # On récupère les coordonnées de la première ligne de départ / arrivée
         self.coordonnees_portion_actuelle = self.coordonnees_depart # Coordonnées de la portion actuellement chargée
 

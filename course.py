@@ -45,6 +45,10 @@ class Course:
                 #pygame.time.wait(1000)
 
 
+                if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
+                    print("La ligne d'arrivée a été passée !")
+
+
                 if not self.kart_joueur.moteur_allume:
                     self.kart_joueur.decelerer()
 
