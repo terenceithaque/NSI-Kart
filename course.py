@@ -168,7 +168,8 @@ class Course:
                 if self.kart_joueur.est_hors_circuit(1280, 720):
                     print("Le kart du joueur est hors du circuit !")                
                     
-                self.kart_joueur.afficher() 
+                self.kart_joueur.afficher()
+                self.joueur.afficher_position() 
 
 
                 #print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))
