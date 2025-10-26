@@ -4,7 +4,8 @@ pygame.init()
 from kart import *
 from circuits import *
 from joueur import *
-
+from adversaires import *
+import random
 
 class Course:
     """Classe représentant une course indépendante."""
@@ -19,13 +20,29 @@ class Course:
         self.fenetre = fenetre
         assert 0 < position_joueur <= n_participants, f"La position de départ du joueur doit être comprise entre 1 et {n_participants}."
 
-        self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), 120, 600, 6.0, 0.25, "haut") # Kart du joueur
-        self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur) # Joueur
+        
 
         self.circuit = Circuit(self.fenetre, numero_circuit)
         print(self.circuit.donnees)
         print(self.circuit.tourne_a_droite((0, 3)))
         print(self.circuit.est_tout_droit((0, 4), "bas"))
+        self.adversaires = []
+
+
+        # Générer 11 adversaires avec un décalage entre les karts ainsi qu'un joueur
+        x_coureur = 574
+        y_coureur = 359
+        for i in range(12):
+            if i < 11:
+                kart_adversaire = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, float(random.randint(2, 6)), random.random(), "haut")
+                adversaire = Adversaire(self.fenetre, kart_adversaire, i+1)
+                self.adversaires.append(adversaire)
+                x_coureur += 30
+                y_coureur += 10
+
+            else:
+                self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, 6.0, 0.25, "haut") # Kart du joueur
+                self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur) # Joueur
 
 
     def courir(self) -> None:
@@ -174,8 +191,10 @@ class Course:
                     print("Le kart du joueur est hors du circuit !")                
                     
                 self.kart_joueur.afficher()
-                self.joueur.afficher_position() 
+                self.joueur.afficher_position()
 
+                for adversaire in self.adversaires:
+                    adversaire.afficher()
 
                 #print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))
 

@@ -1,6 +1,10 @@
 # Script des adversaires du joueur
 import pygame
 from kart import *
+import random
+
+# Noms disponibles pour les adversaires
+noms = ["Jean-Louis", "Daniel", "Marie", "Bernard", "Mario", "Luigi", "Judith", "Nicolas"]
 
 
 
@@ -19,9 +23,22 @@ class Adversaire:
         self.position_depart = position_depart # Position de départ de l'adversaire
         self.position = self.position_depart # Position actuelle de l'adversaire dans le classement
         self.tour = 1  # Numéro du tour actuel de l'adversaire, au départ 1
+        self.nom = random.choice(noms)
+        self.police_nom = pygame.font.Font(None, 36)
+
+
+    def afficher_nom(self):
+        """Affiche le nom de l'adversaire à l'écran."""
+        affichage_nom = self.police_nom.render(self.nom, False, (255, 255, 255))
+        self.fenetre.blit(affichage_nom, (self.kart.rect.x, self.kart.rect.y - 5))
 
 
     def incrementer_position(self, addition:int=1):
         """Incrémente la position de l'adversaire dans le classement."""
 
-        self.position += addition    
+        self.position += addition 
+
+    def afficher(self):
+        """Affiche le kart et le nom de l'adversaire."""
+        self.kart.afficher()
+        self.afficher_nom()       
