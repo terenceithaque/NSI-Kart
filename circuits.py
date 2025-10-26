@@ -156,7 +156,9 @@ class Circuit:
                 if direction_actuelle == "gauche" and direction == "droite": continue
                 if direction_actuelle == "droite" and direction == "gauche": continue
 
-                return direction
+
+                if self.donnees[x_case][y_case] in (1, 2):
+                    return direction
             
         return None    
 
@@ -207,7 +209,7 @@ class Circuit:
             while n_lignes_arrivee < n:
                 # Parcourir chaque ligne et chaque colonne dans le tableau de données
                 for ligne in range(len(self.donnees)):
-                    for colonne in range(len(self.donnees[col])):
+                    for colonne in range(len(self.donnees[ligne])):
                         # Si la case actuelle représente une ligne d'arrivée
                         if self.donnees[ligne][colonne] == 2:
                             n_lignes_arrivee += 1 # Incrémenter le compteur de lignes d'arrivée trouvées
@@ -235,21 +237,24 @@ class Circuit:
             self.portions_numeros[portion.numero] = portion
 
 
-    def rotation_virage(self, acienne_direction:str, nouvelle_direction:str) -> int:
+    def rotation_virage(self, ancienne_direction:str, nouvelle_direction:str) -> int:
         """Renvoie la rotation de l'image du virage nécessaire selon l'ancienne et la nouvelle direction."""
 
         table = {
+            # Virages vers la droite
             ("haut", "droite"): 0,
             ("droite", "bas"): 90,
             ("bas", "gauche"):180,
             ("gauche", "haut"): 270,
-            ("haut", "gauche"): 90,
+
+            # Virages vers la gauche
+            ("haut", "gauche"): 270,
             ("gauche", "bas"): 0,
             ("bas", "droite"): 270,
             ("droite", "haut"): 180,
         }
 
-        return table.get((acienne_direction, nouvelle_direction), 0)        
+        return table.get((ancienne_direction, nouvelle_direction), 0)        
 
 
     def mettre_a_jour_portion_actuelle(self, portion:PortionCircuit) -> None:
@@ -259,10 +264,65 @@ class Circuit:
 
     def charger_prochaine_portion(self) -> None:
         """Charge la prochaine portion du circuit."""
-        x, y = self.coordonnees_portion_actuelle
+
+        # Retrouver les portions déjà chargées
+        if self.portion_actuelle.numero < self.nombre_portions() and self.portion_actuelle.numero + 1 in self.portions_numeros:
+            portion_suivante = self.portions_numeros[self.portion_actuelle.numero + 1]
+            self.mettre_a_jour_portion_actuelle(portion_suivante)
+            self.mettre_a_jour_coords_portion_actuelle(portion_suivante.direction)
+
+
+        # Si toutes les portions ont été utilisées, revenir à celle de départ
+        elif self.portion_actuelle.numero == self.nombre_portions():
+            print("Retour à la portion initiale !")
+            portion_suivante = self.portions_numeros[1]
+            self.mettre_a_jour_portion_actuelle(portion_suivante)
+            self.mettre_a_jour_coords_portion_actuelle(portion_suivante.direction)    
+
+        else:
+            x, y = self.coordonnees_portion_actuelle
+            #print(f"Coordonnées de l'ancienne portion : ({x}, {y})")
+            direction_suivante = self.prochaine_direction(x, y, self.portion_actuelle.direction)
+
+            directions_route = {
+                "haut":{
+                    "gauche":["assets/images/virage_gauche.png", self.rotation_virage("haut", "gauche")],
+                    "droite":["assets/images/virage_droite.png", self.rotation_virage("haut", "droite")],
+                    "haut":["assets/images/route.png", 0]
+                },
+                "bas":{
+                    "gauche":["assets/images/virage_gauche.png", self.rotation_virage("bas", "gauche")],
+                    "droite":["assets/images/virage_droite.png", self.rotation_virage("bas", "droite")],
+                    "bas":["assets/images/route.png", 0]
+                },
+                "gauche":{
+                    "haut":["assets/images/virage_gauche.png", self.rotation_virage("gauche", "haut")],
+                    "bas":["assets/images/virage_droite.png", self.rotation_virage("gauche", "bas")],
+                    "gauche":["assets/images/route.png", 90]
+                },
+                "droite":{
+                    "haut":["assets/images/virage_droite.png", self.rotation_virage("droite", "haut")],
+                    "bas":["assets/images/virage_gauche.png", self.rotation_virage("droite", "bas")],
+                    "droite":["assets/images/route.png", 90]
+                }
+                
+            }
+
+            directions = directions_route[self.portion_actuelle.direction]
+            print(directions)
+            for direction in directions.keys():
+                if direction == direction_suivante:
+                    portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction)
+                    self.ajouter_portion(portion_suivante)
+                    self.mettre_a_jour_portion_actuelle(portion_suivante)
+                    self.mettre_a_jour_coords_portion_actuelle(direction)
+
+
+        """x, y = self.coordonnees_portion_actuelle
+        #print(f"Coordonnées de l'ancienne portion : ({x}, {y})")
         direction_suivante = self.prochaine_direction(x, y, self.portion_actuelle.direction)
 
-        print(direction_suivante)
+        print("Direction suivante :", direction_suivante)
         if not direction_suivante:
             print("Fin du circuit ou erreur de tracé.")
             return
@@ -292,13 +352,17 @@ class Circuit:
             rotation = 90
 
         # Gestion des virages
-        if direction_suivante != self.portion_actuelle.direction:
+        if direction_suivante == "gauche" and self.portion_actuelle.direction != "gauche":
             image = "assets/images/virage_gauche.png"
             rotation = self.rotation_virage(self.portion_actuelle.direction, direction_suivante)
 
+        elif direction_suivante == "droite" and self.portion_actuelle.direction != "droite":
+            image = "assets/images/virage_droite.png"
+            rotation = self.rotation_virage(self.portion_actuelle.direction, direction_suivante)    
+
         portion_suivante = PortionCircuit(self.fenetre, image=image, orient_image=rotation, numero=len(self.portions)+1, direction=direction_suivante)
         self.ajouter_portion(portion_suivante)
-        self.mettre_a_jour_portion_actuelle(portion_suivante)            
+        self.mettre_a_jour_portion_actuelle(portion_suivante)"""            
 
 
 
