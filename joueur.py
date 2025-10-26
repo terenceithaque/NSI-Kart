@@ -6,12 +6,13 @@ from circuits import *
 
 class Joueur:
     """Une classe liant tous les éléments du joueur (position, kart, etc)."""
-    def __init__(self, fenetre:pygame.Surface, kart:Kart, portion_depart:PortionCircuit, position_depart:int=12):
+    def __init__(self, fenetre:pygame.Surface, kart:Kart, portion_depart:PortionCircuit, position_depart:int=12, nom:str="Vous"):
         """Initialise le joueur.
         - fenetre : fenêtre où les différentes informations concernant le joueur sont affichées
         - kart: le kart du joueur
         - portion_depart : portion de circuit dans laquelle le kart du joueur est au départ
-        - position_depart : position de départ du joueur"""
+        - position_depart : position de départ du joueur
+        - nom : nom du joueur."""
 
         # Initialisation des attributs
         self.fenetre = fenetre
@@ -23,6 +24,8 @@ class Joueur:
         self.police_position = pygame.font.Font(None, 36)
 
         self.tour = 1 # Numéro du tour actuel du joueur, au départ 1
+        self.nom = nom
+        self.police_nom = pygame.font.Font(None, 36)
 
     def incrementer_position(self, addition:int=1):
         """Incrémente la position du joueur dans le classement."""
@@ -51,8 +54,19 @@ class Joueur:
         }
 
         affichage_position = self.police_position.render(str(self.position), False, positions_couleurs[self.position])
-        self.fenetre.blit(affichage_position, (1196, 561))    
+        self.fenetre.blit(affichage_position, (1196, 561))
+
+    def afficher_nom(self):
+        """Affiche le nom du joueur à l'écran, près du kart."""
+        affichage_nom = self.police_nom.render(self.nom, False, (255, 255, 255))
+        self.fenetre.blit(affichage_nom, (self.kart.rect.x, self.kart.rect.y + 5))        
 
     def actualiser_portion_actuelle(self, portion:PortionCircuit) -> None:
         """Actualise la portion de circuit dans laquelle le kart du joueur est en la remplaçant par celle donnée en paramètre."""
-        self.portion_circuit = portion        
+        self.portion_circuit = portion
+
+    def afficher(self):
+        """Affiche les informations relatives au joueur (kart, nom, position, etc.) à l'écran."""
+        self.kart.afficher()
+        self.afficher_nom()
+        self.afficher_position()            

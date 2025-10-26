@@ -7,20 +7,21 @@ from joueur import *
 from adversaires import *
 import random
 
+
 class Course:
     """Classe représentant une course indépendante."""
-    def __init__(self, fenetre:pygame.Surface, n_participants:int=12, position_joueur=12, numero_circuit=1):
+    def __init__(self, fenetre:pygame.Surface, n_participants:int=12, position_joueur=12, numero_circuit=1, nom_joueur:str="Vous"):
         """Initialise la course.
         - fenetre : fenêtre de jeu dans laquelle les éléments de la course sont affichés
         - n_participants : nombre de participants à la course (adversaires + joueur),
         - position_joueur : position de départ du joueur
-        - numero_circuit : numéro du circuit de course."""
+        - numero_circuit : numéro du circuit de course
+        - nom_joueur : chaîne de caractères, nom du joueur."""
 
         # Initialisation des attributs
         self.fenetre = fenetre
         assert 0 < position_joueur <= n_participants, f"La position de départ du joueur doit être comprise entre 1 et {n_participants}."
 
-        
 
         self.circuit = Circuit(self.fenetre, numero_circuit)
         print(self.circuit.donnees)
@@ -34,15 +35,20 @@ class Course:
         y_coureur = 359
         for i in range(12):
             if i < 11:
-                kart_adversaire = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, float(random.randint(2, 6)), random.random(), "haut")
+                accelerations = [0.25, 0.35, 0.50, 0.75]
+                vitesse_kart = float(random.randint(2, 6))
+                acceleration_kart = random.choice(accelerations)
+                print(f"Vitesse du kart adverse : {vitesse_kart}, accélération du kart adverse : {acceleration_kart}")
+                kart_adversaire = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, vitesse_kart, acceleration_kart, "haut")
                 adversaire = Adversaire(self.fenetre, kart_adversaire, i+1)
                 self.adversaires.append(adversaire)
                 x_coureur += 30
                 y_coureur += 10
+                adversaire.kart.moteur_allume = True
 
             else:
                 self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, 6.0, 0.25, "haut") # Kart du joueur
-                self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur) # Joueur
+                self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur, nom_joueur) # Joueur
 
 
     def courir(self) -> None:
@@ -88,6 +94,10 @@ class Course:
                     if evenement.type == acceleration:
                         if self.kart_joueur.moteur_allume: 
                             self.kart_joueur.accelerer()
+
+                        for adversaire in self.adversaires:
+                            if adversaire.kart.moteur_allume:
+                                adversaire.kart.accelerer()    
 
                     if evenement.type == deceleration:
                         if not self.kart_joueur.moteur_allume:
@@ -190,8 +200,8 @@ class Course:
                 if self.kart_joueur.est_hors_circuit(1280, 720):
                     print("Le kart du joueur est hors du circuit !")                
                     
-                self.kart_joueur.afficher()
-                self.joueur.afficher_position()
+                
+                self.joueur.afficher()
 
                 for adversaire in self.adversaires:
                     adversaire.afficher()
