@@ -204,6 +204,7 @@ class Course:
                 self.joueur.afficher()
 
                 for adversaire in self.adversaires:
+                    adversaire.kart.deplacer()
                     adversaire.afficher()
 
                 #print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))

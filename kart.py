@@ -146,7 +146,6 @@ class Kart(pygame.sprite.Sprite):
                 if self.vitesse_haut > self.vitesse_max:
                     self.vitesse_haut = self.vitesse_max
 
-                print("Vitesse du kart (haut) :", self.vitesse_haut)    
 
         elif self.direction == "bas":
             if self.vitesse_bas < self.vitesse_max:
@@ -155,7 +154,6 @@ class Kart(pygame.sprite.Sprite):
                 if self.vitesse_bas > self.vitesse_max:
                     self.vitesse_bas = self.vitesse_max
 
-                print("Vitesse du kart (bas) :", self.vitesse_bas)    
 
         elif self.direction == "gauche":
             if self.vitesse_gauche < self.vitesse_max:
@@ -164,7 +162,6 @@ class Kart(pygame.sprite.Sprite):
                 if self.vitesse_gauche > self.vitesse_max:
                     self.vitesse_gauche = self.vitesse_max
 
-                print("Vitesse du kart (gauche) :", self.vitesse_gauche)    
 
         elif self.direction == "droite":
             if self.vitesse_droite < self.vitesse_max:
@@ -173,26 +170,21 @@ class Kart(pygame.sprite.Sprite):
                 if self.vitesse_droite > self.vitesse_max:
                     self.vitesse_gauche = self.vitesse_max
 
-                print("Vitesse du kart (droite) :", self.vitesse_droite)    
 
 
     def decelerer(self) -> None:
         """Le kart ralentit."""
         if self.vitesse_haut > 0:
             self.vitesse_haut *= 0.95
-            print("Vitesse du kart (haut) :", self.vitesse_haut) 
 
         if self.vitesse_bas > 0:    
             self.vitesse_bas *= 0.95
-            print("Vitesse du kart (bas) :", self.vitesse_bas)
 
         if self.vitesse_gauche > 0:    
             self.vitesse_gauche *= 0.95
-            print("Vitesse du kart (gauche) :", self.vitesse_gauche)
 
         if self.vitesse_droite > 0:    
             self.vitesse_droite *= 0.95
-            print("Vitesse du kart (droite) :", self.vitesse_droite)           
 
 
     def deplacer(self) -> None:
