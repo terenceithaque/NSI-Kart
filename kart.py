@@ -51,6 +51,7 @@ class Kart(pygame.sprite.Sprite):
     def changer_direction(self, nouvelle_direction:str) -> None:
         "Modifie la direction du kart"
         self.direction_suivante = nouvelle_direction
+        
 
 
     def est_hors_ecran(self) -> bool:

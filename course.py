@@ -59,9 +59,12 @@ class Course:
 
         acceleration = pygame.USEREVENT + 1
         deceleration = pygame.USEREVENT + 2
-        increment_position_joueur = pygame.USEREVENT + 3
+        #increment_position_joueur = pygame.USEREVENT + 3
+        depasse = pygame.USEREVENT + 4
+
         pygame.time.set_timer(acceleration, 500)
-        pygame.time.set_timer(increment_position_joueur, 1000)
+        #pygame.time.set_timer(increment_position_joueur, 1000)
+        pygame.time.set_timer(depasse, 500)
 
 
         execution = True
@@ -70,6 +73,11 @@ class Course:
         # Boucle principale
         while execution:
                 #pygame.time.wait(1000)
+
+                for adversaire in self.adversaires:
+                    if adversaire.est_actif:
+                        if self.joueur.depasse(adversaire.kart):
+                            print(f"Le joueur a dépassé le kart de {adversaire.nom}")
 
 
                 if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
@@ -105,8 +113,35 @@ class Course:
                         if not self.kart_joueur.moteur_allume:
                             self.kart_joueur.decelerer()
 
-                    if evenement.type == increment_position_joueur:
-                        self.joueur.incrementer_position(-1)                
+                    """"if evenement.type == increment_position_joueur:
+                        self.joueur.incrementer_position(-1)""" 
+
+                    if evenement.type == depasse:
+                        for adversaire, adversaire2 in zip(self.adversaires, self.adversaires[::-1]):
+                            if adversaire.est_actif:
+                                if self.joueur.depasse(adversaire.kart, self.circuit.portion_actuelle.direction):
+                                    print("Le joueur dépasse le kart de", adversaire.nom)
+                                    self.joueur.incrementer_position(-1)
+                                    adversaire.incrementer_position(1)
+
+                                elif adversaire.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
+                                    self.joueur.incrementer_position(1)
+                                    adversaire.incrementer_position(-1)
+
+    
+
+                            if adversaire2.est_actif:
+                                if self.joueur.depasse(adversaire2.kart, self.circuit.portion_actuelle.direction):
+                                    print("Le joueur dépasse le kart de", adversaire2.nom)
+                                    self.joueur.incrementer_position(-1)
+                                    adversaire2.incrementer_position(1)
+
+                                elif adversaire2.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
+                                    self.joueur.incrementer_position(1)
+                                    adversaire2.incrementer_position(-1)
+
+                                
+      
 
                     if evenement.type == pygame.KEYUP:
                         if evenement.key == pygame.K_SPACE:

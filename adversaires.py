@@ -35,10 +35,30 @@ class Adversaire:
         self.fenetre.blit(affichage_nom, (self.kart.rect.x, self.kart.rect.y - 5))
 
 
+    def depasse(self, kart:Kart,direction:str="haut") -> bool:
+        """Renvoie True si le kart de l'adversaire dépasse un autre kart, False sinon."""
+        if direction == "haut":
+            return self.kart.rect.y < kart.rect.y
+
+        elif direction == "bas":
+            return self.kart.rect.y > kart.rect.y
+
+        elif direction == "gauche":
+            return self.kart.rect.x < kart.rect.x
+
+        elif direction == "droite":
+            return self.kart.rect.x > kart.rect.x        
+
+
     def incrementer_position(self, addition:int=1):
         """Incrémente la position de l'adversaire dans le classement."""
 
         self.position += addition 
+        if self.position < 1:
+            self.position = 1
+
+        if self.position > 12:
+            self.position = 12    
 
     def afficher(self):
         """Affiche le kart et le nom de l'adversaire."""

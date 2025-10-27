@@ -35,6 +35,9 @@ class Joueur:
         if self.position < 1:
             self.position = 1
 
+        if self.position > 12:
+            self.position = 12    
+
     def afficher_position(self) -> None:
         """Affiche la position du joueur à l'écran."""
         # Dictionnaire liant les différentes positions à des couleurs d'affichage en RGB
@@ -59,7 +62,21 @@ class Joueur:
     def afficher_nom(self):
         """Affiche le nom du joueur à l'écran, près du kart."""
         affichage_nom = self.police_nom.render(self.nom, False, (255, 255, 255))
-        self.fenetre.blit(affichage_nom, (self.kart.rect.x, self.kart.rect.y + 5))        
+        self.fenetre.blit(affichage_nom, (self.kart.rect.x, self.kart.rect.y + 5))
+
+    def depasse(self, kart:Kart, direction:str="haut") -> bool:
+        """Renvoie True si le kart du joueur dépasse celui d'un adversaire, False sinon."""
+        if direction == "haut":
+            return self.kart.rect.y < kart.rect.y
+
+        elif direction == "bas":
+            return self.kart.rect.y > kart.rect.y
+
+        elif direction == "gauche":
+            return self.kart.rect.x < kart.rect.x
+
+        elif direction == "droite":
+            return self.kart.rect.x > kart.rect.x          
 
     def actualiser_portion_actuelle(self, portion:PortionCircuit) -> None:
         """Actualise la portion de circuit dans laquelle le kart du joueur est en la remplaçant par celle donnée en paramètre."""
