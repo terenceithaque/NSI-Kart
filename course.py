@@ -164,8 +164,29 @@ class Course:
                             adversaire.kart.changer_position((1279, adversaire.kart.rect.y))
 
                         if adversaire.kart.direction == "droite":
-                            adversaire.kart.changer_position((0, adversaire.kart.rect.y))      
+                            adversaire.kart.changer_position((0, adversaire.kart.rect.y))
 
+                    else:
+                        if self.circuit.portion_actuelle.direction == "haut":
+                            if adversaire.kart.direction != "haut":
+                                adversaire.kart.changer_direction("haut")
+                                
+
+
+                        elif self.circuit.portion_actuelle.direction == "bas":
+                            if adversaire.kart.direction != "bas":
+                                adversaire.kart.changer_direction("bas")
+
+
+                        elif self.circuit.portion_actuelle.direction == "gauche":
+                            if adversaire.kart.direction != "gauche":
+                                adversaire.kart.changer_direction("gauche")
+
+                        elif self.circuit.portion_actuelle.direction == "droite":
+                            if adversaire.kart.direction != "droite":
+                                adversaire.kart.changer_direction("droite")
+
+                        adversaire.kart.mettre_a_jour_rotation()
 
 
                 if self.kart_joueur.est_hors_ecran():
@@ -226,6 +247,10 @@ class Course:
                     
                 
                 self.joueur.afficher()
+
+                for adversaire in self.adversaires:
+                    adversaire.kart.mettre_a_jour_direction()
+                    adversaire.kart.deplacer()
 
                 for adversaire in self.circuit.portion_actuelle.adversaires:
                     if adversaire.est_actif:

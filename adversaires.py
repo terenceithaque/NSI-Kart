@@ -4,7 +4,8 @@ from kart import *
 import random
 
 # Noms disponibles pour les adversaires
-noms = ["Jean-Louis", "Daniel", "Marie", "Bernard", "Mario", "Luigi", "Judith", "Nicolas"]
+noms = ["Jean-Louis", "Daniel", "Marie", "Bernard", "Mario", "Luigi", "Judith", "Nicolas",
+        "Adel", "François", "Jacques", "Simone"]
 
 
 
