@@ -25,6 +25,7 @@ class Adversaire:
         self.tour = 1  # Numéro du tour actuel de l'adversaire, au départ 1
         self.nom = random.choice(noms)
         self.police_nom = pygame.font.Font(None, 36)
+        self.est_actif = True
 
 
     def afficher_nom(self):

@@ -51,6 +51,8 @@ class Course:
                 self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur, nom_joueur) # Joueur
 
 
+        self.circuit.portion_actuelle.adversaires = self.adversaires.copy()
+
     def courir(self) -> None:
         """Démarre la course."""
 
@@ -146,6 +148,26 @@ class Course:
                 self.kart_joueur.deplacer()
 
 
+                # Si au moins un kart adverse est sorti de l'écran
+                for adversaire in self.adversaires:
+                    if adversaire.kart.est_hors_ecran():
+                        # Charger la portion de circuit suivante, mais sans mettre à jour l'actuelle immédiatement
+                        self.circuit.charger_prochaine_portion(update=False, adversaires=[adversaire])
+                        adversaire.est_actif = False
+                        if adversaire.kart.direction == "haut":
+                            adversaire.kart.changer_position((adversaire.kart.rect.x, 716))
+
+                        if adversaire.kart.direction == "bas":
+                            adversaire.kart.changer_position((adversaire.kart.rect.x, 0))
+
+                        if adversaire.kart.direction == "gauche":
+                            adversaire.kart.changer_position((1279, adversaire.kart.rect.y))
+
+                        if adversaire.kart.direction == "droite":
+                            adversaire.kart.changer_position((0, adversaire.kart.rect.y))      
+
+
+
                 if self.kart_joueur.est_hors_ecran():
                     print("Le kart du joueur est hors de l'écran !")
                     print("Coordonnées de la portion de circuit :", self.circuit.coordonnees_portion_actuelle)
@@ -167,7 +189,9 @@ class Course:
                     if self.kart_joueur.direction == "droite":
                         self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
 
-                    self.circuit.charger_prochaine_portion()
+                    self.circuit.charger_prochaine_portion(update=True)
+                    for adversaire in self.circuit.portion_actuelle.adversaires:
+                        adversaire.est_actif = True
                     
                     """"if self.kart_joueur.direction_suivante == "haut":
                         if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
@@ -203,9 +227,10 @@ class Course:
                 
                 self.joueur.afficher()
 
-                for adversaire in self.adversaires:
-                    adversaire.kart.deplacer()
-                    adversaire.afficher()
+                for adversaire in self.circuit.portion_actuelle.adversaires:
+                    if adversaire.est_actif:
+                        adversaire.kart.deplacer()
+                        adversaire.afficher()
 
                 #print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))
 

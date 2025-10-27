@@ -27,7 +27,8 @@ def trace_circuit(numero_circuit:int=1) -> list:
 
 class PortionCircuit:
     """Une portion de route sur un circuit."""
-    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1, direction:str="haut"):
+    def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1, direction:str="haut",
+                 adversaires:list=[]):
         """Initialise la portion de route.
         - fenetre : fenêtre de jeu dans laquelle la portion de route est affichée
         - image : image représentant la portion de route
@@ -35,7 +36,8 @@ class PortionCircuit:
         - longueur : longueur de la portion en pixels
         - largeur : largeur de la portion en pixels
         - numero : numéro identifiant de la portion
-        - direction : direction vers laquelle la portion de circuit est orientée."""
+        - direction : direction vers laquelle la portion de circuit est orientée
+        - adversaires : liste des adversaires présents dans la portion."""
 
 
         # Initialisation des attributs
@@ -52,6 +54,7 @@ class PortionCircuit:
         self.orient = orient_image
         self.longueur = longueur
         self.largeur = largeur
+        self.adversaires = adversaires
     
 
     def placer_ligne_arrivee(self) -> None:
@@ -262,22 +265,38 @@ class Circuit:
         self.portion_actuelle = portion
 
 
-    def charger_prochaine_portion(self) -> None:
-        """Charge la prochaine portion du circuit."""
+    def charger_prochaine_portion(self, update=True, adversaires=[]) -> None:
+        """Charge la prochaine portion du circuit.
+        - update : booléen, met à jour directement la portion actuelle si sa valeur est True. Sinon, charge la prochaine portion mais ne met pas à jour l'actuelle."""
+        
+
+        #self.portion_actuelle.adversaires = []
 
         # Retrouver les portions déjà chargées
         if self.portion_actuelle.numero < self.nombre_portions() and self.portion_actuelle.numero + 1 in self.portions_numeros:
+            print("Chargement d'une portion existante")
             portion_suivante = self.portions_numeros[self.portion_actuelle.numero + 1]
-            self.mettre_a_jour_portion_actuelle(portion_suivante)
-            self.mettre_a_jour_coords_portion_actuelle(portion_suivante.direction)
+            if len(adversaires) > 0:
+    
+                portion_suivante.adversaires.extend(adversaires)
+                #print(portion_suivante.adversaires)
+            
+            if update:
+                self.mettre_a_jour_portion_actuelle(portion_suivante)
+                self.mettre_a_jour_coords_portion_actuelle(portion_suivante.direction)
 
 
         # Si toutes les portions ont été utilisées, revenir à celle de départ
         elif self.portion_actuelle.numero == self.nombre_portions():
             print("Retour à la portion initiale !")
             portion_suivante = self.portions_numeros[1]
-            self.mettre_a_jour_portion_actuelle(portion_suivante)
-            self.mettre_a_jour_coords_portion_actuelle(portion_suivante.direction)    
+            if len(adversaires) > 0:
+                
+                portion_suivante.adversaires.extend(adversaires)
+            
+            if update:
+                self.mettre_a_jour_portion_actuelle(portion_suivante)
+                self.mettre_a_jour_coords_portion_actuelle(portion_suivante.direction)    
 
         else:
             x, y = self.coordonnees_portion_actuelle
@@ -312,10 +331,11 @@ class Circuit:
             print(directions)
             for direction in directions.keys():
                 if direction == direction_suivante:
-                    portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction)
+                    portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction, adversaires=adversaires)
                     self.ajouter_portion(portion_suivante)
-                    self.mettre_a_jour_portion_actuelle(portion_suivante)
-                    self.mettre_a_jour_coords_portion_actuelle(direction)
+                    if update:
+                        self.mettre_a_jour_portion_actuelle(portion_suivante)
+                        self.mettre_a_jour_coords_portion_actuelle(direction)
 
 
         """x, y = self.coordonnees_portion_actuelle
