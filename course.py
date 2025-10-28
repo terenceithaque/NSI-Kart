@@ -28,6 +28,11 @@ class Course:
         print(self.circuit.tourne_a_droite((0, 3)))
         print(self.circuit.est_tout_droit((0, 4), "bas"))
         self.adversaires = []
+        self.cloche = pygame.time.Clock()
+        self.intervalle_timer_depart = 1000 # Intervalle de mise à jour du timer de départ
+        self.textes_timer_depart = ["3", "2", "1", "Partez !"] # Textes affichés lors du timer de départ
+        self.police_timer_depart = pygame.font.Font(None, 36)
+
 
 
         # Générer 11 adversaires avec un décalage entre les karts ainsi qu'un joueur
@@ -53,10 +58,18 @@ class Course:
 
         self.circuit.portion_actuelle.adversaires = self.adversaires.copy()
 
+        self.dernier_temps = pygame.time.get_ticks()
+
+    def afficher_timer_depart(self, n=0, x=700, y=500):
+        """Affiche le timer de départ""" 
+        texte = self.textes_timer_depart[n]
+        affichage_timer = self.police_timer_depart.render(texte, False, (255, 255, 255))
+        self.fenetre.blit(affichage_timer, (x, y))
+
     def courir(self) -> None:
         """Démarre la course."""
 
-
+        course_demarree = False
         acceleration = pygame.USEREVENT + 1
         deceleration = pygame.USEREVENT + 2
         #increment_position_joueur = pygame.USEREVENT + 3
@@ -68,217 +81,232 @@ class Course:
 
 
         execution = True
+        n_texte_timer = 0
+
+        x_timer_depart = 500
+        y_timer_depart = 500
 
 
         # Boucle principale
         while execution:
                 #pygame.time.wait(1000)
+                maintenant = pygame.time.get_ticks()
+                if not course_demarree:
+                    if maintenant - self.dernier_temps >= self.intervalle_timer_depart:
+                        self.afficher_timer_depart(n_texte_timer, x_timer_depart, y_timer_depart)
+                        y_timer_depart += 15
+                        self.dernier_temps = pygame.time.get_ticks()
+                        n_texte_timer += 1
+                        if n_texte_timer == 4:
+                            course_demarree = True
 
-                for adversaire in self.adversaires:
-                    if adversaire.est_actif:
-                        if self.joueur.depasse(adversaire.kart):
-                            print(f"Le joueur a dépassé le kart de {adversaire.nom}")
+                elif course_demarree:
 
-
-                if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
-                    print("La ligne d'arrivée a été passée !")
-
-
-                if not self.kart_joueur.moteur_allume:
-                    self.kart_joueur.decelerer()
-
-                self.fenetre.fill((255, 255, 255))
-
-
-                self.circuit.afficher()
-
-                touches = pygame.key.get_pressed()
+                    for adversaire in self.adversaires:
+                        if adversaire.est_actif:
+                            if self.joueur.depasse(adversaire.kart):
+                                print(f"Le joueur a dépassé le kart de {adversaire.nom}")
 
 
-                #print(self.kart_joueur.rect.x, self.kart_joueur.rect.y)
-
-                for evenement in pygame.event.get():
-                    if evenement.type == pygame.QUIT:
-                        pygame.quit()
-
-                    if evenement.type == acceleration:
-                        if self.kart_joueur.moteur_allume: 
-                            self.kart_joueur.accelerer()
-
-                        for adversaire in self.adversaires:
-                            if adversaire.kart.moteur_allume:
-                                adversaire.kart.accelerer()    
-
-                    if evenement.type == deceleration:
-                        if not self.kart_joueur.moteur_allume:
-                            self.kart_joueur.decelerer()
-
-                    """"if evenement.type == increment_position_joueur:
-                        self.joueur.incrementer_position(-1)""" 
-
-                    if evenement.type == depasse:
-                        for adversaire, adversaire2 in zip(self.adversaires, self.adversaires[::-1]):
-                            if adversaire.est_actif:
-                                if self.joueur.depasse(adversaire.kart, self.circuit.portion_actuelle.direction):
-                                    print("Le joueur dépasse le kart de", adversaire.nom)
-                                    self.joueur.incrementer_position(-1)
-                                    adversaire.incrementer_position(1)
-
-                                elif adversaire.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
-                                    self.joueur.incrementer_position(1)
-                                    adversaire.incrementer_position(-1)
-
-    
-
-                            if adversaire2.est_actif:
-                                if self.joueur.depasse(adversaire2.kart, self.circuit.portion_actuelle.direction):
-                                    print("Le joueur dépasse le kart de", adversaire2.nom)
-                                    self.joueur.incrementer_position(-1)
-                                    adversaire2.incrementer_position(1)
-
-                                elif adversaire2.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
-                                    self.joueur.incrementer_position(1)
-                                    adversaire2.incrementer_position(-1)
-
-                                
-      
-
-                    if evenement.type == pygame.KEYUP:
-                        if evenement.key == pygame.K_SPACE:
-                            self.kart_joueur.moteur_allume = not self.kart_joueur.moteur_allume
-                            if self.kart_joueur.moteur_allume == False:
-                                pygame.time.set_timer(acceleration, 0)
-                                pygame.time.set_timer(deceleration, 1000)
-
-                            else:
-                                pygame.time.set_timer(deceleration, 0)
-                                pygame.time.set_timer(acceleration, 500)    
+                    if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
+                        print("La ligne d'arrivée a été passée !")
 
 
-                    if evenement.type == pygame.MOUSEMOTION:
-                        print(pygame.mouse.get_pos())
+                    if not self.kart_joueur.moteur_allume:
+                        self.kart_joueur.decelerer()
+
+                    self.fenetre.fill((255, 255, 255))
 
 
-                if not self.kart_joueur.moteur_allume:
-                    self.kart_joueur.decelerer()               
+                    self.circuit.afficher()
 
-                if touches[pygame.K_RIGHT]:
-                    self.kart_joueur.changer_direction("droite")
-                    self.kart_joueur.mettre_a_jour_rotation()
-
-                if touches[pygame.K_LEFT]:
-                    self.kart_joueur.changer_direction("gauche")
-                    self.kart_joueur.mettre_a_jour_rotation()
-
-                if touches[pygame.K_UP]:
-                    self.kart_joueur.changer_direction("haut")
-                    self.kart_joueur.mettre_a_jour_rotation()
-
-                if touches[pygame.K_DOWN]:
-                    self.kart_joueur.changer_direction("bas")
-                    self.kart_joueur.mettre_a_jour_rotation()
+                    touches = pygame.key.get_pressed()
 
 
-                self.kart_joueur.mettre_a_jour_direction()
-                self.kart_joueur.deplacer()
+                    #print(self.kart_joueur.rect.x, self.kart_joueur.rect.y)
+
+                    for evenement in pygame.event.get():
+                        if evenement.type == pygame.QUIT:
+                            pygame.quit()
+
+                        if evenement.type == acceleration:
+                            if self.kart_joueur.moteur_allume: 
+                                self.kart_joueur.accelerer()
+
+                            for adversaire in self.adversaires:
+                                if adversaire.kart.moteur_allume:
+                                    adversaire.kart.accelerer()    
+
+                        if evenement.type == deceleration:
+                            if not self.kart_joueur.moteur_allume:
+                                self.kart_joueur.decelerer()
+
+                        """"if evenement.type == increment_position_joueur:
+                            self.joueur.incrementer_position(-1)""" 
+
+                        if evenement.type == depasse:
+                            for adversaire, adversaire2 in zip(self.adversaires, self.adversaires[::-1]):
+                                if adversaire.est_actif:
+                                    if self.joueur.depasse(adversaire.kart, self.circuit.portion_actuelle.direction):
+                                        print("Le joueur dépasse le kart de", adversaire.nom)
+                                        self.joueur.incrementer_position(-1)
+                                        adversaire.incrementer_position(1)
+
+                                    elif adversaire.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
+                                        self.joueur.incrementer_position(1)
+                                        adversaire.incrementer_position(-1)
+
+        
+
+                                if adversaire2.est_actif:
+                                    if self.joueur.depasse(adversaire2.kart, self.circuit.portion_actuelle.direction):
+                                        print("Le joueur dépasse le kart de", adversaire2.nom)
+                                        self.joueur.incrementer_position(-1)
+                                        adversaire2.incrementer_position(1)
+
+                                    elif adversaire2.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
+                                        self.joueur.incrementer_position(1)
+                                        adversaire2.incrementer_position(-1)
+
+                                    
+        
+
+                        if evenement.type == pygame.KEYUP:
+                            if evenement.key == pygame.K_SPACE:
+                                self.kart_joueur.moteur_allume = not self.kart_joueur.moteur_allume
+                                if self.kart_joueur.moteur_allume == False:
+                                    pygame.time.set_timer(acceleration, 0)
+                                    pygame.time.set_timer(deceleration, 1000)
+
+                                else:
+                                    pygame.time.set_timer(deceleration, 0)
+                                    pygame.time.set_timer(acceleration, 500)    
 
 
-                # Si au moins un kart adverse est sorti de l'écran
-                for adversaire in self.adversaires:
-                    if adversaire.kart.est_hors_ecran():
-                        # Charger la portion de circuit suivante, mais sans mettre à jour l'actuelle immédiatement
-                        self.circuit.charger_prochaine_portion(update=False, adversaires=[adversaire])
-                        adversaire.est_actif = False
-                        if adversaire.kart.direction == "haut":
-                            adversaire.kart.changer_position((adversaire.kart.rect.x, 716))
-
-                        if adversaire.kart.direction == "bas":
-                            adversaire.kart.changer_position((adversaire.kart.rect.x, 0))
-
-                        if adversaire.kart.direction == "gauche":
-                            adversaire.kart.changer_position((1279, adversaire.kart.rect.y))
-
-                        if adversaire.kart.direction == "droite":
-                            adversaire.kart.changer_position((0, adversaire.kart.rect.y))
-
-                    else:
-                        if self.circuit.portion_actuelle.direction == "haut":
-                            if adversaire.kart.direction != "haut":
-                                adversaire.kart.changer_direction("haut")
-                                
+                        if evenement.type == pygame.MOUSEMOTION:
+                            print(pygame.mouse.get_pos())
 
 
-                        elif self.circuit.portion_actuelle.direction == "bas":
-                            if adversaire.kart.direction != "bas":
-                                adversaire.kart.changer_direction("bas")
+                    if not self.kart_joueur.moteur_allume:
+                        self.kart_joueur.decelerer()               
+
+                    if touches[pygame.K_RIGHT]:
+                        self.kart_joueur.changer_direction("droite")
+                        self.kart_joueur.mettre_a_jour_rotation()
+
+                    if touches[pygame.K_LEFT]:
+                        self.kart_joueur.changer_direction("gauche")
+                        self.kart_joueur.mettre_a_jour_rotation()
+
+                    if touches[pygame.K_UP]:
+                        self.kart_joueur.changer_direction("haut")
+                        self.kart_joueur.mettre_a_jour_rotation()
+
+                    if touches[pygame.K_DOWN]:
+                        self.kart_joueur.changer_direction("bas")
+                        self.kart_joueur.mettre_a_jour_rotation()
 
 
-                        elif self.circuit.portion_actuelle.direction == "gauche":
-                            if adversaire.kart.direction != "gauche":
-                                adversaire.kart.changer_direction("gauche")
-
-                        elif self.circuit.portion_actuelle.direction == "droite":
-                            if adversaire.kart.direction != "droite":
-                                adversaire.kart.changer_direction("droite")
-
-                        adversaire.kart.mettre_a_jour_rotation()
+                    self.kart_joueur.mettre_a_jour_direction()
+                    self.kart_joueur.deplacer()
 
 
-                if self.kart_joueur.est_hors_ecran():
-                    print("Le kart du joueur est hors de l'écran !")
-                    print("Coordonnées de la portion de circuit :", self.circuit.coordonnees_portion_actuelle)
+                    # Si au moins un kart adverse est sorti de l'écran
+                    for adversaire in self.adversaires:
+                        if adversaire.kart.est_hors_ecran():
+                            # Charger la portion de circuit suivante, mais sans mettre à jour l'actuelle immédiatement
+                            self.circuit.charger_prochaine_portion(update=False, adversaires=[adversaire])
+                            adversaire.est_actif = False
+                            if adversaire.kart.direction == "haut":
+                                adversaire.kart.changer_position((adversaire.kart.rect.x, 716))
 
-                    # Charger la prochaine portion de circuit selon la direction du kart du joueur
-                    # A ajouter : gestion des transitions (virages vers la droite, la gauche, etc. selon la direction)
+                            if adversaire.kart.direction == "bas":
+                                adversaire.kart.changer_position((adversaire.kart.rect.x, 0))
+
+                            if adversaire.kart.direction == "gauche":
+                                adversaire.kart.changer_position((1279, adversaire.kart.rect.y))
+
+                            if adversaire.kart.direction == "droite":
+                                adversaire.kart.changer_position((0, adversaire.kart.rect.y))
+
+                        else:
+                            if self.circuit.portion_actuelle.direction == "haut":
+                                if adversaire.kart.direction != "haut":
+                                    adversaire.kart.changer_direction("haut")
+                                    
 
 
-                    # Replacer le kart du joueur
-                    if self.kart_joueur.direction == "haut":
-                        self.kart_joueur.changer_position((self.kart_joueur.rect.x, 716))
+                            elif self.circuit.portion_actuelle.direction == "bas":
+                                if adversaire.kart.direction != "bas":
+                                    adversaire.kart.changer_direction("bas")
 
-                    if self.kart_joueur.direction == "bas":
-                        self.kart_joueur.changer_position((self.kart_joueur.rect.x, 0))
 
-                    if self.kart_joueur.direction == "gauche":
-                        self.kart_joueur.changer_position((1279, self.kart_joueur.rect.y))
+                            elif self.circuit.portion_actuelle.direction == "gauche":
+                                if adversaire.kart.direction != "gauche":
+                                    adversaire.kart.changer_direction("gauche")
 
-                    if self.kart_joueur.direction == "droite":
-                        self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
+                            elif self.circuit.portion_actuelle.direction == "droite":
+                                if adversaire.kart.direction != "droite":
+                                    adversaire.kart.changer_direction("droite")
 
-                    self.circuit.charger_prochaine_portion(update=True)
-                    for adversaire in self.circuit.portion_actuelle.adversaires:
-                        adversaire.est_actif = True
-                    
-                    """"if self.kart_joueur.direction_suivante == "haut":
-                        if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
-                            self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
-                            portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.circuit.portions) + 1)
-                            self.circuit.ajouter_portion(portion_suivante)
-                            self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+                            adversaire.kart.mettre_a_jour_rotation()
 
-                    elif self.kart_joueur.direction_suivante == "bas":
-                        if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
-                            self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
-                            portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.circuit.portions) + 1)
-                            self.circuit.ajouter_portion(portion_suivante)
-                            self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)
 
-                    elif self.kart_joueur.direction_suivante == "gauche":
-                        if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
-                            self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
-                            portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 90, 1280, 720, len(self.circuit.portions) + 1)
-                            self.circuit.ajouter_portion(portion_suivante)
-                            self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+                    if self.kart_joueur.est_hors_ecran():
+                        print("Le kart du joueur est hors de l'écran !")
+                        print("Coordonnées de la portion de circuit :", self.circuit.coordonnees_portion_actuelle)
 
-                    elif self.kart_joueur.direction_suivante == "droite":
-                        if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
-                            self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
-                            portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 90, 1280, 720, len(self.circuit.portions) + 1)
-                            self.circuit.ajouter_portion(portion_suivante)
-                            self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)"""                
+                        # Charger la prochaine portion de circuit selon la direction du kart du joueur
+                        # A ajouter : gestion des transitions (virages vers la droite, la gauche, etc. selon la direction)
 
-                if self.kart_joueur.est_hors_circuit(1280, 720):
-                    print("Le kart du joueur est hors du circuit !")                
+
+                        # Replacer le kart du joueur
+                        if self.kart_joueur.direction == "haut":
+                            self.kart_joueur.changer_position((self.kart_joueur.rect.x, 716))
+
+                        if self.kart_joueur.direction == "bas":
+                            self.kart_joueur.changer_position((self.kart_joueur.rect.x, 0))
+
+                        if self.kart_joueur.direction == "gauche":
+                            self.kart_joueur.changer_position((1279, self.kart_joueur.rect.y))
+
+                        if self.kart_joueur.direction == "droite":
+                            self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
+
+                        self.circuit.charger_prochaine_portion(update=True)
+                        for adversaire in self.circuit.portion_actuelle.adversaires:
+                            adversaire.est_actif = True
+                        
+                        """"if self.kart_joueur.direction_suivante == "haut":
+                            if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
+                                self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
+                                portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.circuit.portions) + 1)
+                                self.circuit.ajouter_portion(portion_suivante)
+                                self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+
+                        elif self.kart_joueur.direction_suivante == "bas":
+                            if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
+                                self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
+                                portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 0, 1280, 720, len(self.circuit.portions) + 1)
+                                self.circuit.ajouter_portion(portion_suivante)
+                                self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+
+                        elif self.kart_joueur.direction_suivante == "gauche":
+                            if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
+                                self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
+                                portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 90, 1280, 720, len(self.circuit.portions) + 1)
+                                self.circuit.ajouter_portion(portion_suivante)
+                                self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)
+
+                        elif self.kart_joueur.direction_suivante == "droite":
+                            if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):
+                                self.circuit.mettre_a_jour_coords_portion_actuelle(self.kart_joueur.direction_suivante)
+                                portion_suivante = PortionCircuit(self.fenetre, "assets/images/route.png", 90, 1280, 720, len(self.circuit.portions) + 1)
+                                self.circuit.ajouter_portion(portion_suivante)
+                                self.circuit.mettre_a_jour_portion_actuelle(portion_suivante)"""                
+
+                    if self.kart_joueur.est_hors_circuit(1280, 720):
+                        print("Le kart du joueur est hors du circuit !")                
                     
                 
                 self.joueur.afficher()
