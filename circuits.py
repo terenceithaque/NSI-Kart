@@ -265,6 +265,46 @@ class Circuit:
         self.portion_actuelle = portion
 
 
+    def case_adjacente(self, x=0, y=0, direction="haut") -> int:
+        """Renvoie le contenu de la case adjacente à celle de coordonnées (x, y) dans la direction donnée. Si la case de coordonnées (x, y) est à l'extrémité de la direction donnée, son contenu est renvoyé."""
+        # Direction "haut"
+        if direction == "haut":
+            if x == 0:
+                return self.donnees[x][y]
+
+            else:
+                return self.donnees[x-1][y]
+
+        # Direction "bas"
+        elif direction == "bas":
+            if x == len(self.donnees) -1:
+                return self.donnees[x][y]
+
+            else:
+                return self.donnees[x+1][y]
+
+        # Direction "gauche"
+        elif direction == "gauche":
+            if y == 0:
+                return self.donnees[x][y]
+
+            else:
+                return self.donnees[x][y-1]
+
+        # Direction "droite"
+        elif direction == "droite":
+            if y == len(self.donnees[0]) -1:
+                return self.donnees[x][y]
+
+            else:
+                return self.donnees[x][y+1]
+
+        # Renvoyer des données valides au cas où dans tous les cas
+        return self.donnees[x][y]            
+
+
+
+
     def charger_prochaine_portion(self, update=True, adversaires=[]) -> None:
         """Charge la prochaine portion du circuit.
         - update : booléen, met à jour directement la portion actuelle si sa valeur est True. Sinon, charge la prochaine portion mais ne met pas à jour l'actuelle."""
@@ -333,6 +373,10 @@ class Circuit:
             for direction in directions.keys():
                 if direction == direction_suivante:
                     portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction, adversaires=adversaires)
+                    # Si la portion suivante a une ligne d'arrivée, la placer
+                    if self.case_adjacente(x, y, direction_suivante) == 2:
+                        portion_suivante.placer_ligne_arrivee()
+                        
                     self.ajouter_portion(portion_suivante)
                     if update:
                         self.mettre_a_jour_portion_actuelle(portion_suivante)
