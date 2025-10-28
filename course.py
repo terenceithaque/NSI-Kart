@@ -75,10 +75,12 @@ class Course:
         deceleration = pygame.USEREVENT + 2
         #increment_position_joueur = pygame.USEREVENT + 3
         depasse = pygame.USEREVENT + 4
+        passage_ligne = pygame.USEREVENT + 5
 
         pygame.time.set_timer(acceleration, 500)
         #pygame.time.set_timer(increment_position_joueur, 1000)
         pygame.time.set_timer(depasse, 500)
+        pygame.time.set_timer(passage_ligne, 200)
 
 
         execution = True
@@ -106,14 +108,13 @@ class Course:
 
                 elif course_demarree:
 
-                    for adversaire in self.adversaires:
+                    """for adversaire in self.adversaires:
                         if adversaire.est_actif:
                             if self.joueur.depasse(adversaire.kart):
-                                print(f"Le joueur a dépassé le kart de {adversaire.nom}")
+                                print(f"Le joueur a dépassé le kart de {adversaire.nom}")"""
 
 
-                    if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
-                        print("La ligne d'arrivée a été passée !")
+                    
 
 
                     if not self.kart_joueur.moteur_allume:
@@ -172,6 +173,22 @@ class Course:
                                         self.joueur.incrementer_position(1)
                                         adversaire2.incrementer_position(-1)
 
+                        if evenement.type == passage_ligne:
+                            if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
+                                print("La ligne d'arrivée a été passée !")
+                                # Fin de la course si le joueur a terminé le troisième tour
+                                if self.joueur.tour == 3:
+                                    print("Le joueur a terminé la course !")
+                                    return
+                                
+                                # Si le joueur a visité toutes les portions de circuit pendant le tour
+                                if len(self.joueur.portions_visitees) == self.circuit.nombre_portions():
+                                    print("Passage au tour suivant.")
+                                    self.joueur.tour += 1 # Incrémenter de 1 le nombre de tours effectués par le joueur
+                                    self.joueur.portions_visitees = [] # Réinitialise la liste des portions visitées
+
+                                else:
+                                    print("Toutes les portions n'ont pas été visitées, tour actuel maintenu.")    
                                     
         
 
@@ -278,6 +295,10 @@ class Course:
                             self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
 
                         self.circuit.charger_prochaine_portion(update=True)
+                        if len(self.joueur.portions_visitees) < self.circuit.nombre_portions():
+                            self.joueur.portions_visitees.append(self.circuit.portion_actuelle)
+
+
                         for adversaire in self.circuit.portion_actuelle.adversaires:
                             adversaire.est_actif = True
                         

@@ -24,8 +24,10 @@ class Joueur:
         self.police_position = pygame.font.Font(None, 36)
 
         self.tour = 1 # Numéro du tour actuel du joueur, au départ 1
+        self.police_tour = pygame.font.Font(None, 36) # Police d'affichage du tour actuel du joueur
         self.nom = nom
-        self.police_nom = pygame.font.Font(None, 36)
+        self.police_nom = pygame.font.Font(None, 36) # Police d'affichage du nom du joueur
+        self.portions_visitees = [] # Liste des portions de circuit visitées par le joueur
 
     def incrementer_position(self, addition:int=1):
         """Incrémente la position du joueur dans le classement."""
@@ -59,6 +61,12 @@ class Joueur:
         affichage_position = self.police_position.render(str(self.position), False, positions_couleurs[self.position])
         self.fenetre.blit(affichage_position, (1196, 561))
 
+    def afficher_tour(self) -> None:
+        """Affiche le tour actuel du joueur à l'écran."""
+        texte_tour = f"Tour {self.tour}/3"
+        affichage_tour = self.police_tour.render(texte_tour, 0, (128, 128, 128))
+        self.fenetre.blit(affichage_tour, (0, 0))    
+
     def afficher_nom(self):
         """Affiche le nom du joueur à l'écran, près du kart."""
         affichage_nom = self.police_nom.render(self.nom, False, (255, 255, 255))
@@ -86,4 +94,5 @@ class Joueur:
         """Affiche les informations relatives au joueur (kart, nom, position, etc.) à l'écran."""
         self.kart.afficher()
         self.afficher_nom()
-        self.afficher_position()            
+        self.afficher_position()
+        self.afficher_tour()            

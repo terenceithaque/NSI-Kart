@@ -274,7 +274,7 @@ class Circuit:
 
         # Retrouver les portions déjà chargées
         if self.portion_actuelle.numero < self.nombre_portions() and self.portion_actuelle.numero + 1 in self.portions_numeros:
-            print("Chargement d'une portion existante")
+            #print("Chargement d'une portion existante")
             portion_suivante = self.portions_numeros[self.portion_actuelle.numero + 1]
             if len(adversaires) > 0:
     
@@ -290,6 +290,7 @@ class Circuit:
         elif self.portion_actuelle.numero == self.nombre_portions():
             print("Retour à la portion initiale !")
             portion_suivante = self.portions_numeros[1]
+            portion_suivante.placer_ligne_arrivee()
             if len(adversaires) > 0:
                 
                 portion_suivante.adversaires.extend(adversaires)
@@ -328,7 +329,7 @@ class Circuit:
             }
 
             directions = directions_route[self.portion_actuelle.direction]
-            print(directions)
+            #print(directions)
             for direction in directions.keys():
                 if direction == direction_suivante:
                     portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction, adversaires=adversaires)
