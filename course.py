@@ -1,6 +1,7 @@
 # Script d'une course
 import pygame
 pygame.init()
+pygame.mixer.init()
 from kart import *
 from circuits import *
 from joueur import *
@@ -85,6 +86,7 @@ class Course:
 
         x_timer_depart = 500
         y_timer_depart = 500
+        son_timer_depart = pygame.mixer.Sound("assets/audio/timer.mp3")
 
 
         # Boucle principale
@@ -92,8 +94,10 @@ class Course:
                 #pygame.time.wait(1000)
                 maintenant = pygame.time.get_ticks()
                 if not course_demarree:
+                    #son_timer_depart.stop()
                     if maintenant - self.dernier_temps >= self.intervalle_timer_depart:
                         self.afficher_timer_depart(n_texte_timer, x_timer_depart, y_timer_depart)
+                        son_timer_depart.play()
                         y_timer_depart += 15
                         self.dernier_temps = pygame.time.get_ticks()
                         n_texte_timer += 1
