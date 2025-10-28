@@ -89,6 +89,8 @@ class Course:
         x_timer_depart = 500
         y_timer_depart = 500
         son_timer_depart = pygame.mixer.Sound("assets/audio/timer.mp3")
+        musique = pygame.mixer.music.load("assets/audio/musique.mp3")
+        pygame.mixer.music.play(-1)
 
 
         # Boucle principale
