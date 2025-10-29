@@ -46,7 +46,7 @@ class Course:
                 acceleration_kart = random.choice(accelerations)
                 print(f"Vitesse du kart adverse : {vitesse_kart}, accélération du kart adverse : {acceleration_kart}")
                 kart_adversaire = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, vitesse_kart, acceleration_kart, "haut")
-                adversaire = Adversaire(self.fenetre, kart_adversaire, i+1)
+                adversaire = Adversaire(self.fenetre, kart_adversaire, i+1, self.circuit.portion_depart)
                 self.adversaires.append(adversaire)
                 x_coureur += 30
                 y_coureur += 10
@@ -338,11 +338,8 @@ class Course:
                 
                 self.joueur.afficher()
 
-                for adversaire in self.adversaires:
-                    adversaire.kart.mettre_a_jour_direction()
-                    adversaire.kart.deplacer()
-
                 for adversaire in self.circuit.portion_actuelle.adversaires:
+                    adversaire.kart.mettre_a_jour_direction()
                     if adversaire.est_actif:
                         adversaire.kart.deplacer()
                         adversaire.afficher()

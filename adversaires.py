@@ -1,6 +1,7 @@
 # Script des adversaires du joueur
 import pygame
 from kart import *
+from circuits import *
 import random
 
 # Noms disponibles pour les adversaires
@@ -11,7 +12,7 @@ noms = ["Jean-Louis", "Daniel", "Marie", "Bernard", "Mario", "Luigi", "Judith", 
 
 class Adversaire:
     """Une classe liant tous les éléments d'un adversaire (position, kart, etc)."""
-    def __init__(self, fenetre:pygame.Surface, kart:Kart, position_depart:int=1):
+    def __init__(self, fenetre:pygame.Surface, kart:Kart, position_depart:int=1, portion_depart=PortionCircuit):
         """Initialise l'adversaire.
         - fenetre : fenêtre où les informations relatives à l'adversaire sont affichées
         - kart : le kart de l'adversaire,
@@ -27,6 +28,8 @@ class Adversaire:
         self.nom = random.choice(noms)
         self.police_nom = pygame.font.Font(None, 36)
         self.est_actif = True
+        self.portion_depart = portion_depart
+        self.portion = self.portion_depart
 
 
     def afficher_nom(self):
