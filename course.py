@@ -91,6 +91,8 @@ class Course:
         x_timer_depart = 500
         y_timer_depart = 500
         son_timer_depart = pygame.mixer.Sound("assets/audio/timer.mp3")
+        depasse_1 = pygame.mixer.Sound("assets/audio/depasse_1.mp3") # Son joué quand le joueur dépasse un adversaire
+        depasse_2 = pygame.mixer.Sound("assets/audio/depasse_2.mp3") # Son joué quand un adversaire dépasse le joueur
         musique = pygame.mixer.music.load("assets/audio/musique.mp3")
         pygame.mixer.music.play(-1)
 
@@ -155,15 +157,22 @@ class Course:
 
                         if evenement.type == depasse:
                             for adversaire, adversaire2 in zip(self.adversaires, self.adversaires[::-1]):
-                                if adversaire.est_actif and adversaire.portion == self.circuit.portion_actuelle:
+                                if adversaire.est_actif and adversaire.portion == self.joueur.portion_circuit:
                                     if self.joueur.depasse(adversaire.kart, self.circuit.portion_actuelle.direction):
                                         #print("Le joueur dépasse le kart de", adversaire.nom)
                                         self.joueur.incrementer_position(-1)
                                         adversaire.incrementer_position(1)
+                                        depasse_1.play()
 
                                     elif adversaire.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
                                         self.joueur.incrementer_position(1)
                                         adversaire.incrementer_position(-1)
+                                        depasse_2.play()
+
+                                    if adversaire2.est_actif and adversaire2.portion == adversaire.portion:
+                                        if adversaire.depasse(adversaire2.kart):
+                                            adversaire2.incrementer_position(1)
+                                            adversaire.incrementer_position(-1)
 
         
 
@@ -172,10 +181,17 @@ class Course:
                                         #print("Le joueur dépasse le kart de", adversaire2.nom)
                                         self.joueur.incrementer_position(-1)
                                         adversaire2.incrementer_position(1)
+                                        depasse_1.play()
 
                                     elif adversaire2.depasse(self.kart_joueur, self.circuit.portion_actuelle.direction):
                                         self.joueur.incrementer_position(1)
                                         adversaire2.incrementer_position(-1)
+                                        depasse_2.play()
+
+                                    if adversaire.est_actif and adversaire.portion == adversaire2.portion:
+                                        if adversaire2.depasse(adversaire.kart):
+                                            adversaire.incrementer_position(1)
+                                            adversaire2.incrementer_position(-1)    
 
                         if evenement.type == passage_ligne:
                             if self.circuit.portion_actuelle.est_ligne_arrivee_passee(self.kart_joueur):
@@ -315,8 +331,8 @@ class Course:
                             self.joueur.portions_visitees.append(self.circuit.portion_actuelle)
 
 
-                        for adversaire in self.circuit.portion_actuelle.adversaires:
-                            adversaire.est_actif = True
+                        """for adversaire in self.circuit.portion_actuelle.adversaires:
+                            adversaire.est_actif = True"""
                         
                         """"if self.kart_joueur.direction_suivante == "haut":
                             if self.circuit.est_tout_droit(self.circuit.coordonnees_portion_actuelle, self.kart_joueur.direction_suivante):

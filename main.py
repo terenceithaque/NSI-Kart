@@ -17,4 +17,4 @@ pygame.display.set_caption("NSI-Kart")
 
 
 course = Course(fenetre, 12, 12, 1, nom_joueur)
-course.courir()
+course.courir() 
