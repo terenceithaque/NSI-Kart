@@ -54,7 +54,7 @@ class Course:
 
             else:
                 self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, 6.0, 0.25, "haut") # Kart du joueur
-                self.joueur = Joueur(self.fenetre, self.kart_joueur, None, position_joueur, nom_joueur) # Joueur
+                self.joueur = Joueur(self.fenetre, self.kart_joueur, self.circuit.portion_depart, position_joueur, nom_joueur) # Joueur
 
 
         self.circuit.portion_actuelle.adversaires = self.adversaires.copy()
@@ -69,6 +69,8 @@ class Course:
 
     def courir(self) -> None:
         """Démarre la course."""
+
+        
 
         course_demarree = False
         acceleration = pygame.USEREVENT + 1
@@ -153,9 +155,9 @@ class Course:
 
                         if evenement.type == depasse:
                             for adversaire, adversaire2 in zip(self.adversaires, self.adversaires[::-1]):
-                                if adversaire.est_actif:
+                                if adversaire.est_actif and adversaire.portion == self.circuit.portion_actuelle:
                                     if self.joueur.depasse(adversaire.kart, self.circuit.portion_actuelle.direction):
-                                        print("Le joueur dépasse le kart de", adversaire.nom)
+                                        #print("Le joueur dépasse le kart de", adversaire.nom)
                                         self.joueur.incrementer_position(-1)
                                         adversaire.incrementer_position(1)
 
@@ -165,9 +167,9 @@ class Course:
 
         
 
-                                if adversaire2.est_actif:
+                                if adversaire2.est_actif and adversaire2.portion == adversaire.portion or adversaire2.portion == self.circuit.portion_actuelle:
                                     if self.joueur.depasse(adversaire2.kart, self.circuit.portion_actuelle.direction):
-                                        print("Le joueur dépasse le kart de", adversaire2.nom)
+                                        #print("Le joueur dépasse le kart de", adversaire2.nom)
                                         self.joueur.incrementer_position(-1)
                                         adversaire2.incrementer_position(1)
 
@@ -237,9 +239,17 @@ class Course:
                     # Si au moins un kart adverse est sorti de l'écran
                     for adversaire in self.adversaires:
                         if adversaire.kart.est_hors_ecran():
+                            print(f"Longueur de self.adversaires : {len(self.adversaires)}")
+                            print(f"{len(list([adversaire] for adversaire in self.adversaires if adversaire.est_actif))} adversaires sont actifs.")
                             # Charger la portion de circuit suivante, mais sans mettre à jour l'actuelle immédiatement
-                            self.circuit.charger_prochaine_portion(update=False, adversaires=[adversaire])
-                            adversaire.est_actif = False
+                            if adversaire.portion.numero >= self.circuit.portion_actuelle.numero:
+                                self.circuit.charger_prochaine_portion(update=False, adversaires=[adversaire])
+                                adversaire.est_actif = False
+
+                            else:
+                                adversaire.portion = self.circuit.portions_numeros[self.circuit.portion_actuelle.numero - 1]
+                                adversaire.est_actif = False    
+
                             if adversaire.kart.direction == "haut":
                                 adversaire.kart.changer_position((adversaire.kart.rect.x, 716))
 
@@ -253,6 +263,7 @@ class Course:
                                 adversaire.kart.changer_position((0, adversaire.kart.rect.y))
 
                         else:
+                            adversaire.est_actif = True
                             if self.circuit.portion_actuelle.direction == "haut":
                                 if adversaire.kart.direction != "haut":
                                     adversaire.kart.changer_direction("haut")
@@ -297,6 +308,9 @@ class Course:
                             self.kart_joueur.changer_position((0, self.kart_joueur.rect.y))            
 
                         self.circuit.charger_prochaine_portion(update=True)
+                        self.joueur.portion_circuit = self.circuit.portion_actuelle
+                        print("N° de la portion de circuit du joueur :",self.joueur.portion_circuit.numero)
+                        print("N° de la portion actuelle :", self.circuit.portion_actuelle.numero)
                         if len(self.joueur.portions_visitees) < self.circuit.nombre_portions():
                             self.joueur.portions_visitees.append(self.circuit.portion_actuelle)
 
@@ -338,10 +352,10 @@ class Course:
                 
                 self.joueur.afficher()
 
-                for adversaire in self.circuit.portion_actuelle.adversaires:
+                for adversaire in self.adversaires:
+                    adversaire.kart.deplacer()
                     adversaire.kart.mettre_a_jour_direction()
                     if adversaire.est_actif:
-                        adversaire.kart.deplacer()
                         adversaire.afficher()
 
                 #print("Coordonnées de la ligne d'arrivée :", self.circuit.coordonnees_ligne_arrivee(1))
