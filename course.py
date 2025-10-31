@@ -202,13 +202,33 @@ class Course:
                                     return
                                 
                                 # Si le joueur a visité toutes les portions de circuit pendant le tour
-                                if len(self.joueur.portions_visitees) == self.circuit.nombre_portions():
+                                elif len(self.joueur.portions_visitees) == self.circuit.nombre_portions():
                                     print("Passage au tour suivant.")
                                     self.joueur.tour += 1 # Incrémenter de 1 le nombre de tours effectués par le joueur
                                     self.joueur.portions_visitees = [] # Réinitialise la liste des portions visitées
 
                                 else:
-                                    print("Toutes les portions n'ont pas été visitées, tour actuel maintenu.")    
+                                    print("Toutes les portions n'ont pas été visitées, tour actuel maintenu.")
+
+                            for adversaire in self.adversaires:
+                                if self.circuit.portion_actuelle.est_ligne_arrivee_passee(adversaire.kart):
+                                    # Si un adversaire a terminé la course, le détruire
+                                    if adversaire.tour == 3:
+                                        print(f"{adversaire.nom} a terminé la course !")
+                                        self.adversaires.remove(adversaire)
+                                        del adversaire
+
+                                    # Si l'adversaire a visité toutes les portions de circuit pendant le tour
+                                    elif len(adversaire.portions_visitees) >= self.circuit.nombre_portions():
+                                        print(f"Passage de {adversaire.nom} au tour suivant.")
+                                        adversaire.tour += 1
+                                        adversaire.portions_visitees = []
+
+                                    else:
+                                        print(f"Toutes les portions n'ont pas été visitées par {adversaire.nom}, tour actuel maintenu.")        
+
+
+
                                     
         
 
@@ -261,10 +281,12 @@ class Course:
                             if adversaire.portion.numero >= self.circuit.portion_actuelle.numero:
                                 self.circuit.charger_prochaine_portion(update=False, adversaires=[adversaire])
                                 adversaire.est_actif = False
+                                adversaire.portions_visitees.append(self.circuit.portion_actuelle)
 
                             else:
-                                adversaire.portion = self.circuit.portions_numeros[self.circuit.portion_actuelle.numero - 1]
-                                adversaire.est_actif = False    
+                                adversaire.portion = self.circuit.portions_numeros.get(self.circuit.portion_actuelle.numero - 1, self.circuit.portion_actuelle)
+                                adversaire.est_actif = False
+                                adversaire.portions_visitees.append(adversaire.portion)    
 
                             if adversaire.kart.direction == "haut":
                                 adversaire.kart.changer_position((adversaire.kart.rect.x, 716))
@@ -303,6 +325,7 @@ class Course:
 
 
                     if self.kart_joueur.est_hors_ecran():
+                        print(self.circuit.portions_numeros)
                         print("Le kart du joueur est hors de l'écran !")
                         print("Coordonnées de la portion de circuit :", self.circuit.coordonnees_portion_actuelle)
 

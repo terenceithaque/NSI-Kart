@@ -30,6 +30,8 @@ class Adversaire:
         self.est_actif = True
         self.portion_depart = portion_depart
         self.portion = self.portion_depart
+        self.score = 0
+        self.portions_visitees = [] # Liste des portions visitées par l'adversaire
 
 
     def afficher_nom(self):

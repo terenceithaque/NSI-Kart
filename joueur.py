@@ -28,6 +28,7 @@ class Joueur:
         self.nom = nom
         self.police_nom = pygame.font.Font(None, 36) # Police d'affichage du nom du joueur
         self.portions_visitees = [] # Liste des portions de circuit visitées par le joueur
+        self.score = 0 # Score du joueur
 
     def incrementer_position(self, addition:int=1):
         """Incrémente la position du joueur dans le classement."""
