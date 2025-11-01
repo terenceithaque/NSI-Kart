@@ -6,6 +6,17 @@ import os
 from ligne_arrivee import *
 
 
+# Cache d'images des portions
+cache_images = {}
+
+def charger_image_en_cache(chemin:str) -> pygame.Surface:
+    """Charge l'image demandée depuis le cache d'images. Si cette image n'y est pas présente, elle y est ajoutée."""
+    if chemin not in cache_images:
+        cache_images[chemin] = pygame.image.load(chemin).convert_alpha()
+
+    return cache_images[chemin]    
+
+
 def trace_circuit(numero_circuit:int=1) -> list:
     """Ouvre le fichier circuits.json et renvoie le tracé du circuit correspondant au numéro donné sous forme de tableau en 2D."""
     fichier_circuits = "circuits.json" # Nom du fichier regroupant les données des circuits
@@ -42,7 +53,7 @@ class PortionCircuit:
 
         # Initialisation des attributs
         self.fenetre = fenetre
-        self.image = pygame.image.load(image)
+        self.image = charger_image_en_cache(image)
         self.image = pygame.transform.rotate(self.image, orient_image)
         self.image = pygame.transform.scale(self.image, (longueur, largeur))
         self.rect_image = self.image.get_rect()
