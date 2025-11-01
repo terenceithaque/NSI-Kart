@@ -9,12 +9,20 @@ from ligne_arrivee import *
 # Cache d'images des portions
 cache_images = {}
 
-def charger_image_en_cache(chemin:str) -> pygame.Surface:
+def charger_image_en_cache(chemin:str, rotation:int=0, taille:tuple=(1280, 720)) -> pygame.Surface:
     """Charge l'image demandée depuis le cache d'images. Si cette image n'y est pas présente, elle y est ajoutée."""
-    if chemin not in cache_images:
-        cache_images[chemin] = pygame.image.load(chemin).convert_alpha()
+    cle = (chemin, rotation, taille)
+    if cle not in cache_images:
+        base = pygame.image.load(chemin).convert_alpha()
+        if rotation:
+            base = pygame.transform.rotate(base, rotation)
 
-    return cache_images[chemin]    
+        if taille:
+            base = pygame.transform.scale(base, taille)    
+
+        cache_images[cle] = base
+
+    return cache_images[cle]    
 
 
 def trace_circuit(numero_circuit:int=1) -> list:
@@ -39,7 +47,7 @@ def trace_circuit(numero_circuit:int=1) -> list:
 class PortionCircuit:
     """Une portion de route sur un circuit."""
     def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1, direction:str="haut",
-                 adversaires:list=[]):
+                 adversaires=None):
         """Initialise la portion de route.
         - fenetre : fenêtre de jeu dans laquelle la portion de route est affichée
         - image : image représentant la portion de route
@@ -53,9 +61,7 @@ class PortionCircuit:
 
         # Initialisation des attributs
         self.fenetre = fenetre
-        self.image = charger_image_en_cache(image)
-        self.image = pygame.transform.rotate(self.image, orient_image)
-        self.image = pygame.transform.scale(self.image, (longueur, largeur))
+        self.image = charger_image_en_cache(image, orient_image, (longueur, largeur))
         self.rect_image = self.image.get_rect()
 
         self.numero = numero
