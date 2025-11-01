@@ -11,18 +11,21 @@ import random
 
 class Course:
     """Classe représentant une course indépendante."""
-    def __init__(self, fenetre:pygame.Surface, n_participants:int=12, position_joueur=12, numero_circuit=1, nom_joueur:str="Vous"):
+    def __init__(self, fenetre:pygame.Surface, n_participants:int=12, position_joueur=12, numero_circuit=1, nom_joueur:str="Vous", positions_scores:dict={}):
         """Initialise la course.
         - fenetre : fenêtre de jeu dans laquelle les éléments de la course sont affichés
         - n_participants : nombre de participants à la course (adversaires + joueur),
         - position_joueur : position de départ du joueur
         - numero_circuit : numéro du circuit de course
-        - nom_joueur : chaîne de caractères, nom du joueur."""
+        - nom_joueur : chaîne de caractères, nom du joueur
+        - positions_scores : dictionnaire contenant les scores attribués aux participants selon leur position à la fin de la course."""
 
         # Initialisation des attributs
         self.fenetre = fenetre
         assert 0 < position_joueur <= n_participants, f"La position de départ du joueur doit être comprise entre 1 et {n_participants}."
+        assert len(positions_scores) == n_participants, f"Le dictionnaire de scores selon les positions doit avoir la même taille que le nombre de participants ({n_participants} participants contre une taille de {len(positions_scores)})."
 
+        self.n_participants = n_participants
 
         self.circuit = Circuit(self.fenetre, numero_circuit)
         print(self.circuit.donnees)
@@ -33,14 +36,16 @@ class Course:
         self.intervalle_timer_depart = 1000 # Intervalle de mise à jour du timer de départ
         self.textes_timer_depart = ["3", "2", "1", "Partez !"] # Textes affichés lors du timer de départ
         self.police_timer_depart = pygame.font.Font(None, 36)
+        self.polices_scores = [] # Liste des polices de scores
+
 
 
 
         # Générer 11 adversaires avec un décalage entre les karts ainsi qu'un joueur
         x_coureur = 574
         y_coureur = 359
-        for i in range(12):
-            if i < 11:
+        for i in range(n_participants):
+            if i < n_participants - 1:
                 accelerations = [0.25, 0.35, 0.50, 0.75]
                 vitesse_kart = float(random.randint(2, 6))
                 acceleration_kart = random.choice(accelerations)
@@ -51,13 +56,18 @@ class Course:
                 x_coureur += 30
                 y_coureur += 10
                 adversaire.kart.moteur_allume = True
+                police_score_adv = pygame.font.Font(None, 36)
+                self.polices_scores.append(police_score_adv)
 
             else:
                 self.kart_joueur = Kart(self.fenetre, choisir_image_kart(1, 6), x_coureur, y_coureur, 6.0, 0.25, "haut") # Kart du joueur
                 self.joueur = Joueur(self.fenetre, self.kart_joueur, self.circuit.portion_depart, position_joueur, nom_joueur) # Joueur
+                police_score_joueur = pygame.font.Font(None, 36)
+                self.polices_scores.append(police_score_joueur)
 
 
         self.circuit.portion_actuelle.adversaires = self.adversaires.copy()
+        self.positions_scores = positions_scores
 
         self.dernier_temps = pygame.time.get_ticks()
 
@@ -66,6 +76,39 @@ class Course:
         texte = self.textes_timer_depart[n]
         affichage_timer = self.police_timer_depart.render(texte, False, (255, 255, 255))
         self.fenetre.blit(affichage_timer, (x, y))
+
+
+    def fin_course(self) -> None:
+        """Affiche les scores finaux et termine la course."""
+        # Déterminer les scores
+        for position in self.positions_scores:
+            if self.joueur.position == position:
+                self.joueur.score += self.positions_scores[position]
+
+            else:
+                for adversaire in self.adversaires:
+                    if adversaire.position == position:
+                        adversaire.score += self.positions_scores[position]
+
+        # Afficher les scores
+        x = 500
+        y = 300
+        for pos in range(1, self.n_participants + 1):
+            if pos == self.joueur.position:
+                police = self.polices_scores[pos - 1]
+                affichage_score_joueur = police.render(f"{self.joueur.nom} : {self.joueur.score}", False, (255, 255, 255))
+                self.fenetre.blit(affichage_score_joueur, (x, y))
+                y += 20
+
+            else:
+                for adversaire in self.adversaires:
+                    if pos == adversaire.position:
+                        police = self.polices_scores[pos - 1]
+                        affichage_score_adv = police.render(f"{adversaire.nom} : {adversaire.score}", False, (255, 255, 255))
+                        self.fenetre.blit(affichage_score_adv, (x, y))
+                        y += 20    
+
+        
 
     def courir(self) -> None:
         """Démarre la course."""
@@ -199,6 +242,9 @@ class Course:
                                 # Fin de la course si le joueur a terminé le troisième tour
                                 if self.joueur.tour == 3:
                                     print("Le joueur a terminé la course !")
+                                    self.fin_course()
+                                    pygame.display.flip()
+                                    pygame.time.wait(5000)
                                     return
                                 
                                 # Si le joueur a visité toutes les portions de circuit pendant le tour
