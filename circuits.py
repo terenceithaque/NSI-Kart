@@ -71,7 +71,11 @@ class PortionCircuit:
         self.orient = orient_image
         self.longueur = longueur
         self.largeur = largeur
-        self.adversaires = adversaires
+        if adversaires is None:
+            self.adversaires = []
+
+        else:    
+            self.adversaires = adversaires
     
 
     def placer_ligne_arrivee(self) -> None:

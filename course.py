@@ -77,6 +77,11 @@ class Course:
         affichage_timer = self.police_timer_depart.render(texte, False, (255, 255, 255))
         self.fenetre.blit(affichage_timer, (x, y))
 
+    def mettre_a_jour_etat_adversaires(self) -> None:
+        """Active uniquement les adversaires de la portion visible."""
+        for adversaire in self.adversaires:
+            adversaire.est_actif = bool(adversaire.portion.numero == self.circuit.portion_actuelle)    
+
 
     def fin_course(self) -> None:
         """Affiche les scores finaux et termine la course."""
@@ -125,7 +130,7 @@ class Course:
         pygame.time.set_timer(acceleration, 500)
         #pygame.time.set_timer(increment_position_joueur, 1000)
         pygame.time.set_timer(depasse, 500)
-        pygame.time.set_timer(passage_ligne, 200)
+        pygame.time.set_timer(passage_ligne, 100)
 
 
         execution = True
@@ -244,7 +249,7 @@ class Course:
                                     print("Le joueur a terminé la course !")
                                     self.fin_course()
                                     pygame.display.flip()
-                                    pygame.time.wait(5000)
+                                    pygame.time.wait(10000)
                                     return
                                 
                                 # Si le joueur a visité toutes les portions de circuit pendant le tour
@@ -438,6 +443,10 @@ class Course:
                 self.joueur.afficher()
 
                 for adversaire in self.adversaires:
+                    if adversaire.portion != self.joueur.portion_circuit:
+                        print(f"La portion de {adversaire.nom} n'est pas la même que celle du joueur.")
+                        
+
                     adversaire.kart.deplacer()
                     adversaire.kart.mettre_a_jour_direction()
                     if adversaire.est_actif:
