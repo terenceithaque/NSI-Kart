@@ -443,8 +443,8 @@ class Course:
                 self.joueur.afficher()
 
                 for adversaire in self.adversaires:
-                    if adversaire.portion != self.joueur.portion_circuit:
-                        print(f"La portion de {adversaire.nom} n'est pas la même que celle du joueur.")
+                    """if adversaire.portion != self.joueur.portion_circuit:
+                        print(f"La portion de {adversaire.nom} n'est pas la même que celle du joueur.")"""
                         
 
                     adversaire.kart.deplacer()

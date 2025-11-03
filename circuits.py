@@ -278,7 +278,40 @@ class Circuit:
             ("droite", "haut"): 180,
         }
 
-        return table.get((ancienne_direction, nouvelle_direction), 0)        
+        return table.get((ancienne_direction, nouvelle_direction), 0)
+    
+    def portions_autour(self,n_portion) -> list:
+        "Renvoie une liste contenant les deux portions situées autour de celle dont le numéro est donné en paramètre, étant la précédente et la suivante."
+        # Assertions
+        assert n_portion >= 1 and n_portion <= self.nombre_portions()
+        
+        portions = [] # Liste des deux portions autour
+        
+        # Récupérer la portion correspondant au numéro
+        portion = self.portions_numeros[n_portion]
+        
+        # Récupérer la portion suivante
+        if n_portion < self.nombre_portions():
+            portion_suivante = self.portions_numeros[n_portion + 1]
+            portions.append(portion_suivante)
+        
+        elif n_portion == self.nombre_portions():
+            portion_suivante = self.portions_numeros[1]
+            portions.append(portion_suivante)
+        
+        # Récupérer la portion précédente
+        if n_portion > 1:
+            portion_precedente = self.portions_numeros[n_portion - 1]
+            portions.append(portion_precedente)
+        
+        elif n_portion == 1:
+            portion_precedente = self.portions_numeros[self.nombre_portions()]
+            portions.append(portion_precedente)
+        
+        return portions
+            
+        
+        
 
 
     def mettre_a_jour_portion_actuelle(self, portion:PortionCircuit) -> None:
