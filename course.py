@@ -147,6 +147,11 @@ class Course:
 
         # Boucle principale
         while execution:
+                
+                portions_autour = self.circuit.portions_autour(self.circuit.portion_actuelle.numero)
+                if len(portions_autour)> 0:
+                    print(f"Portion actuelle : {self.circuit.portion_actuelle.numero}, portions autour :{list(portion.numero for portion in portions_autour)}")
+                #print("Portions autour :", self.circuit.portions_autour(self.circuit.portion_actuelle.numero))
                 #pygame.time.wait(1000)
                 maintenant = pygame.time.get_ticks()
                 if not course_demarree:

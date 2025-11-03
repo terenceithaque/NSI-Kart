@@ -292,8 +292,9 @@ class Circuit:
         
         # Récupérer la portion suivante
         if n_portion < self.nombre_portions():
-            portion_suivante = self.portions_numeros[n_portion + 1]
-            portions.append(portion_suivante)
+            if n_portion + 1 in self.portions_numeros:
+                portion_suivante = self.portions_numeros[n_portion + 1]
+                portions.append(portion_suivante)
         
         elif n_portion == self.nombre_portions():
             portion_suivante = self.portions_numeros[1]
@@ -301,12 +302,14 @@ class Circuit:
         
         # Récupérer la portion précédente
         if n_portion > 1:
-            portion_precedente = self.portions_numeros[n_portion - 1]
-            portions.append(portion_precedente)
+            if n_portion - 1 in self.portions_numeros:
+                portion_precedente = self.portions_numeros[n_portion - 1]
+                portions.append(portion_precedente)
         
         elif n_portion == 1:
-            portion_precedente = self.portions_numeros[self.nombre_portions()]
-            portions.append(portion_precedente)
+            if self.nombre_portions() in self.portions_numeros:
+                portion_precedente = self.portions_numeros[self.nombre_portions()]
+                portions.append(portion_precedente)
         
         return portions
             
