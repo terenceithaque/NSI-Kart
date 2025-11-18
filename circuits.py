@@ -91,7 +91,6 @@ class PortionCircuit:
         else:    
             self.adversaires = adversaires
     
-
     def placer_ligne_arrivee(self) -> None:
         """Place une ligne d'arrivée sur la portion de circuit."""
         if not self.ligne_arrivee_placee:
@@ -127,8 +126,13 @@ class PortionCircuit:
     def afficher(self) -> None:
         """Affiche la portion de route à l'écran"""
         # Afficher seulement une partie de la portion
-        self.image.set_clip((self.longueur_affichee, self.largeur_affichee, self.longueur, self.largeur))
-        self.fenetre.blit(self.image, self.rect_image)
+        zone = pygame.Rect(
+            0, 0,
+            self.longueur_affichee,
+            self.largeur_affichee)
+        
+        self.fenetre.blit(self.image, self.rect_image, zone)
+        
         if self.ligne_arrivee_placee:
             self.ligne_arrivee.afficher()    
 
@@ -459,7 +463,7 @@ class Circuit:
             for direction in directions.keys():
                 if direction == direction_suivante:
                     portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction, adversaires=adversaires,
-                                                      longueur_affichee=5, largeur_affichee=5)
+                                                      longueur_affichee=100, largeur_affichee=720)
                     # Si la portion suivante a une ligne d'arrivée, la placer
                     if self.case_adjacente(x, y, direction_suivante) == 2:
                         portion_suivante.placer_ligne_arrivee()
