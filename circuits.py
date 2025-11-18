@@ -47,7 +47,7 @@ def trace_circuit(numero_circuit:int=1) -> list:
 class PortionCircuit:
     """Une portion de route sur un circuit."""
     def __init__(self, fenetre:pygame.Surface, image:str="assets/images/route.png", orient_image=0, longueur=1280, largeur=720, numero=1, direction:str="haut",
-                 adversaires=None):
+                 adversaires=None, longueur_affichee=1280, largeur_affichee=720):
         """Initialise la portion de route.
         - fenetre : fenêtre de jeu dans laquelle la portion de route est affichée
         - image : image représentant la portion de route
@@ -56,7 +56,15 @@ class PortionCircuit:
         - largeur : largeur de la portion en pixels
         - numero : numéro identifiant de la portion
         - direction : direction vers laquelle la portion de circuit est orientée
-        - adversaires : liste des adversaires présents dans la portion."""
+        - adversaires : liste des adversaires présents dans la portion
+        - longueur_affichee : longueur affichée actuellement
+        - largeur_affichee : largeur affichée actuellement."""
+        
+        assert longueur_affichee >= 0, "La longueur affichée doit être positive"
+        assert longueur_affichee <= longueur, "La longueur affichée doit être inférieure ou égale à la longueur totale"
+        
+        assert largeur_affichee >= 0, "La largeur affichée doit être positive"
+        assert largeur_affichee <= largeur, "La largeur affichée doit être inférieure ou égale à la largeur totale"
 
 
         # Initialisation des attributs
@@ -71,6 +79,12 @@ class PortionCircuit:
         self.orient = orient_image
         self.longueur = longueur
         self.largeur = largeur
+        
+        # Longueur et largeur affichées
+        self.longueur_affichee = longueur_affichee
+        self.largeur_affichee = largeur_affichee
+        
+        
         if adversaires is None:
             self.adversaires = []
 
@@ -96,6 +110,19 @@ class PortionCircuit:
             return False
         
         return False
+    
+    
+    def mettre_a_jour_longueur_affichee(self, long:int) -> None:
+        "Met à jour la longueur affichée."
+        nouvelle_longueur = self.longueur_affichee + long
+        if nouvelle_longueur <= self.longueur:
+            self.longueur_affichee = nouvelle_longueur
+    
+    def mettre_a_jour_largeur_affichee(self, larg:int) -> None:
+        "Met à jour la largeur affichée"
+        nouvelle_largeur = self.largeur_affichee + larg
+        if nouvelle_largeur <= self.largeur:
+            self.largeur_affichee = nouvelle_largeur
 
     def afficher(self) -> None:
         """Affiche la portion de route à l'écran"""
