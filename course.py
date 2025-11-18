@@ -446,6 +446,8 @@ class Course:
                     
                 
                 self.joueur.afficher()
+                
+                #self.circuit.portion_actuelle.mettre_a_jour_longueur_affichee(self.joueur.vitesse_haut)
 
                 for adversaire in self.adversaires:
                     """if adversaire.portion != self.joueur.portion_circuit:

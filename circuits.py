@@ -126,6 +126,8 @@ class PortionCircuit:
 
     def afficher(self) -> None:
         """Affiche la portion de route à l'écran"""
+        # Afficher seulement une partie de la portion
+        self.image.set_clip((self.longueur_affichee, self.largeur_affichee, self.longueur, self.largeur))
         self.fenetre.blit(self.image, self.rect_image)
         if self.ligne_arrivee_placee:
             self.ligne_arrivee.afficher()    
@@ -456,7 +458,8 @@ class Circuit:
             #print(directions)
             for direction in directions.keys():
                 if direction == direction_suivante:
-                    portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction, adversaires=adversaires)
+                    portion_suivante = PortionCircuit(self.fenetre, directions[direction][0], directions[direction][1], numero=len(self.portions)+1, direction=direction, adversaires=adversaires,
+                                                      longueur_affichee=5, largeur_affichee=5)
                     # Si la portion suivante a une ligne d'arrivée, la placer
                     if self.case_adjacente(x, y, direction_suivante) == 2:
                         portion_suivante.placer_ligne_arrivee()
@@ -464,7 +467,7 @@ class Circuit:
                     self.ajouter_portion(portion_suivante)
                     if update:
                         self.mettre_a_jour_portion_actuelle(portion_suivante)
-                        self.mettre_a_jour_coords_portion_actuelle(direction)
+                        self.mettre_a_jour_coords_portion_actuelle(direction) 
 
 
         """x, y = self.coordonnees_portion_actuelle
