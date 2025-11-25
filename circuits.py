@@ -44,32 +44,18 @@ def trace_circuit(numero_circuit:int=1) -> list:
 
 
 
-class PortionCircuit:
-    def __init__(self, fenetre:pygame.Surface,image:str, hauteur=1280, largeur=720, hauteur_affichee=1280, largeur_affichee=720,
-                 orient_image = 0):
-        
+class Plateau:
+    """Plateau de jeu représentant le circuit"""
+    def __init__(self, fenetre:pygame.Surface):
         
         # Fenêtre pygame
         self.fenetre = fenetre
-        self.hauteur = hauteur
-        self.largeur = largeur
-        self.image = charger_image_en_cache(image, orient_image, taille=(self.hauteur, self.largeur))
-        self.hauteur_affichee = hauteur_affichee
-        self.largeur_affichee = largeur_affichee
-    
-    def mettre_a_jour_affichage_hauteur(self, nouvelle_hauteur:int=1) -> None:
-        """Met à jour de l'affichage de la portion en hauteur"""
-        self.hauteur_affichee += nouvelle_hauteur
+        self.dimensions_fenetre = self.fenetre.get_size()
+        self.x_fenetre = self.dimensions_fenetre[0]
+        self.y_fenetre = self.dimensions_fenetre[1]
         
-    def mettre_a_jour_largeur(self, nouvelle_largeur:int=1) -> None:
-        """Met à jour l'affichage de la portion en largeur"""
-        self.largeur_affichee += nouvelle_largeur
-        
-    def afficher(self):
-        """Affiche la portion à l'écran"""
-        zone = (0, 0, self.hauteur_affichee, self.largeur_affichee)
-        self.fenetre.blit(self.image, zone)
-        
+    def affiche(self) -> None:
+        pass
 
 
         
